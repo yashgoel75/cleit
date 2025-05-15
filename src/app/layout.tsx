@@ -8,10 +8,14 @@ export const metadata: Metadata = {
   description: "",
 };
 
+import Provider from "@/app/Providers";
+
 export default function RootLayout(props: { children: ReactNode }) {
   return (
     <html lang="en">
+      <Provider>
         <body>{props.children}</body>
+        </Provider>
     </html>
   );
 }
