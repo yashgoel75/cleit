@@ -8,7 +8,7 @@ import { WagmiProvider } from "wagmi";
 import { ReactNode } from "react";
 
 const queryClient = new QueryClient();
-const Provider = (props : {children: ReactNode}) => {
+const App = (props : {children: ReactNode}) => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
@@ -20,4 +20,4 @@ const Provider = (props : {children: ReactNode}) => {
   );
 };
 
-export default Provider;
+export default App;
