@@ -1,29 +1,24 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import logo from "../../../public/cleit.png";
 import cleitdarklogo from "../../../public/cleitdark.png";
-import { useState } from "react";
-import {
-  RainbowKitSiweNextAuthProvider,
-  GetSiweMessageOptions,
-} from "@rainbow-me/rainbowkit-siwe-next-auth";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import "@rainbow-me/rainbowkit/styles.css";
-const getSiweMessageOptions: GetSiweMessageOptions = () => ({
-  statement: "Sign in to my RainbowKit app",
-});
+import "./page.css";
+
 function Login() {
+  const router = useRouter();
+
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <Image src={logo} alt="Cleit" width={500} />
-      <br></br>
-      <RainbowKitSiweNextAuthProvider
-        getSiweMessageOptions={getSiweMessageOptions}
-      >
-        {" "}
-      </RainbowKitSiweNextAuthProvider>
-      ;
+      <br />
+      <div className="flex flex-col items-center">
+        <h1 className="text-2xl font-bold mb-4">Welcome to Cleit</h1>
+      </div>
+      <div className="dashboard-button" onClick={() => router.push("/Dashboard")}>
+        Go to Dashboard →
+      </div>
     </div>
   );
 }

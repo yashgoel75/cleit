@@ -12,10 +12,10 @@ import Provider from "@/app/Providers";
 
 export default function RootLayout(props: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <Provider>
+    <Provider>
+      <html>
         <body>{props.children}</body>
-        </Provider>
-    </html>
+      </html>
+    </Provider>
   );
 }
