@@ -11,7 +11,7 @@ function Login() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <Image src={logo} alt="Cleit" width={500} />
+      <Image src={logo} alt="Cleit" width={400} />
       <br />
       <div className="flex flex-col items-center">
         <h1 className="text-2xl font-bold mb-4">Welcome to Cleit</h1>
