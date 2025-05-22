@@ -8,7 +8,11 @@ function Dashboard() {
       </div>
       <div className="flex flex-col items-center w-5/6 h-3/5 m-auto border-1 border-gray-300 rounded-lg p-6 mt-20">
         Convert from ETH to any other token/currency
+        <div className="dashboard-button">
+        Go to Dashboard →
       </div>
+      </div>
+      
     </div>
   );
 }
