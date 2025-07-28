@@ -4,19 +4,42 @@ const { Schema } = mongoose;
 const team = new Schema({
     name: String,
     designation: String,
-    mobile: Number,
+    mobile: String,
     email: String
 })
 const social = new Schema({
     name: String,
     handle: String
 })
-const society = new Schema ({
+const eligibility = new Schema({
+    name: String
+})
+const society = new Schema({
     name: String,
     username: String,
+    logo: String,
     email: String,
     password: String,
     about: String,
     team: [team],
-    social: [social]
+    social: [social],
+    auditionOpen: Boolean,
+    eligibility: [eligibility]
 })
+const user = new Schema({
+    name: String,
+    username: String,
+    mobile: String,
+    email: String,
+    branch: String,
+    section: String,
+    batchStart: Number,
+    batchEnd: Number,
+    wishlist: [{ societyUsername: String }],
+    reminders: [{ societyUsername: String }],
+})
+
+const User = mongoose.model('User', user);
+const Society = mongoose.model('Society', society);
+
+export { User, Society };
