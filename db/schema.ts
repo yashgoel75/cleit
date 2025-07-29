@@ -21,7 +21,6 @@ const society = new Schema({
   email: String,
   password: String,
   about: String,
-  mobile: String,
   team: [team],
   social: [social],
   auditionOpen: Boolean,
@@ -30,7 +29,6 @@ const society = new Schema({
 const user = new Schema({
   name: String,
   username: String,
-  mobile: String,
   email: String,
   password: String,
   branch: String,
