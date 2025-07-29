@@ -3,6 +3,8 @@
 import logo from "@/assets/cleit.png";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import Member from "./Member/page";
+import Society from "./Society/page";
 
 export default function Register() {
   const [registerAsMember, setRegisterAsMember] = useState(true);
@@ -36,9 +38,12 @@ export default function Register() {
           Register as Society
         </div>
       </div>
-      <div className="w-98/100 md:w-1/2 m-auto">
-        <div className="border-1 px-3 border-gray-400 rounded-md">hello</div>
-      </div>
+      {registerAsMember ? (
+        <Member></Member>
+      ) : null}
+      {registerAsSociety ? (
+        <Society></Society>
+      ) : null}
     </>
   );
 }
