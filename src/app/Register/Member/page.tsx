@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import axios from "axios";
 
 export default function Member() {
   const [name, setName] = useState("");
@@ -11,9 +12,9 @@ export default function Member() {
   const [endYear, setEndYear] = useState("");
   const [department, setDepartment] = useState("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({
+    const body = {
       name,
       username,
       email,
@@ -22,7 +23,9 @@ export default function Member() {
       startYear,
       endYear,
       department,
-    });
+    };
+    const res = await axios.post("/api/register/member", body);
+    console.log(res.data);
   };
 
   return (
@@ -32,7 +35,7 @@ export default function Member() {
           Member's Registration
         </div>
         <div className="py-5">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={(e) => handleSubmit(e)}>
             <div className="flex flex-col mb-2">
               <label>Name</label>
               <input
@@ -103,7 +106,7 @@ export default function Member() {
             <div className="flex flex-col mb-2">
               <label>Password</label>
               <input
-                value={name}
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="border px-3 rounded-md p-[2px]"
                 placeholder="Set your password"
