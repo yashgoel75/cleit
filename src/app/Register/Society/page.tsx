@@ -1,4 +1,5 @@
 "use client";
+import axios from "axios";
 import { useState } from "react";
 
 export default function Society() {
@@ -8,15 +9,18 @@ export default function Society() {
   const [password, setPassword] = useState("");
   const [mobile, setMobile] = useState("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({
+    const body = {
       name,
       username,
       email,
       password,
       mobile,
-    });
+    };
+
+    const res = await axios.post("/api/register/society", body);
+    console.log(res.data);
   };
 
   return (
@@ -97,7 +101,7 @@ export default function Society() {
             <div className="flex flex-col mb-2">
               <label>Password</label>
               <input
-                value={name}
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="border px-3 rounded-md p-[2px]"
                 placeholder="Set your password"
