@@ -13,6 +13,18 @@ export default function Society() {
     confirmPassword: "",
   });
 
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
@@ -291,7 +303,7 @@ export default function Society() {
             ) : null}
           </div>
           {usernameAlreadyTaken ? (
-            <div className="flex justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
+            <div className="flex text-sm md:text-base justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="22px"
@@ -305,7 +317,7 @@ export default function Society() {
             </div>
           ) : null}
           {usernameAvailable ? (
-            <div className="flex justify-center items-center bg-green-300 text-[#408118ff] rounded px-3 text-center py-1">
+            <div className="flex text-sm md:text-base justify-center items-center bg-green-300 text-[#408118ff] rounded px-3 text-center py-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -319,7 +331,7 @@ export default function Society() {
             </div>
           ) : null}
           {falseUsernameFormat ? (
-            <div className="flex justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
+            <div className="flex text-sm md:text-base justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="22px"
@@ -370,7 +382,7 @@ export default function Society() {
           </div>
 
           {emailAlreadyTaken ? (
-            <div className="flex justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
+            <div className="flex text-sm md:text-base justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="22px"
@@ -384,7 +396,7 @@ export default function Society() {
             </div>
           ) : null}
           {falseEmailFormat ? (
-            <div className="flex justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
+            <div className="flex text-sm md:text-base justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="22px"
@@ -425,7 +437,7 @@ export default function Society() {
             </div>
           </div>
           {invalidOtp ? (
-            <div className="flex justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
+            <div className="flex text-sm md:text-base justify-center md:items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="22px"
@@ -439,7 +451,7 @@ export default function Society() {
             </div>
           ) : null}
           {validOtp ? (
-            <div className="flex justify-center items-center bg-green-300 text-[#408118ff] rounded px-3 text-center py-1">
+            <div className="flex text-sm md:text-base justify-center items-center bg-green-300 text-[#408118ff] rounded px-3 text-center py-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -552,7 +564,7 @@ export default function Society() {
             </div>
           </div>
           {falsePasswordFormat ? (
-            <div className="flex justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
+            <div className="flex text-sm md:text-base justify-center md:items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="22px"

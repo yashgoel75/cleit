@@ -44,7 +44,7 @@ export default function Header() {
         <div className="lg:flex hidden items-center gap-4">
           <div
             onClick={() => router.push("/auth/Login")}
-            className="px-3  text-[17px] py-1 bg-gray-900 text-white border-gray-900 border -1 border-gray-900 rounded-md hover:cursor-pointer hover:bg-gray-700"
+            className="px-3  text-[17px] py-1 bg-indigo-500 text-white border-indigo-500 border-1 rounded-md hover:cursor-pointer hover:bg-indigo-700"
           >
             Login
           </div>
