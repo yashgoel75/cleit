@@ -12,6 +12,7 @@ export default function Member() {
     name: "",
     username: "",
     email: "",
+    otp: "",
     password: "",
     confirmPassword: "",
     startYear: "",
@@ -35,23 +36,74 @@ export default function Member() {
   const [usernameAvailable, setUsernameAvailable] = useState(false);
   const [emailAlreadyTaken, setEmailAlreadyTaken] = useState(false);
 
+  const [isNameEmpty, setIsNameEmpty] = useState(false);
+  const [isUsernameEmpty, setIsUsernameEmpty] = useState(false);
+  const [isEmailEmpty, setIsEmailEmpty] = useState(false);
+  const [isPasswordEmpty, setIsPasswordEmpty] = useState(false);
+  const [isConfirmPasswordEmpty, setIsConfirmPasswordEmpty] = useState(false);
+  const [isStartYearEmpty, setIsStartYearEmpty] = useState(false);
+  const [isEndYearEmpty, setIsEndYearEmpty] = useState(false);
+  const [isDepartmentEmpty, setIsDepartmentEmpty] = useState(false);
+
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
+    if (name == "name") {
+      setIsNameEmpty(false);
+    }
     if (name === "username") {
+      setIsUsernameEmpty(false);
       setUsernameAvailable(false);
       setUsernameAlreadyTaken(false);
     }
     if (name === "email") {
+      setIsEmailEmpty(false);
       setEmailAlreadyTaken(false);
+    }
+    if (name == "password") {
+      setIsPasswordEmpty(false);
+    }
+    if (name == "confirmPassword") {
+      setIsConfirmPasswordEmpty(false);
+    }
+    if (name == "startYear") {
+      setIsStartYearEmpty(false);
+    }
+    if (name == "endYear") {
+      setIsEndYearEmpty(false);
+    }
+    if (name == "department") {
+      setIsDepartmentEmpty(false);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (
+      formData.name == "" ||
+      formData.username == "" ||
+      formData.email == "" ||
+      formData.password == "" ||
+      formData.confirmPassword == "" ||
+      formData.startYear == "" ||
+      formData.endYear == "" ||
+      formData.department == ""
+    ) {
+      setIsNameEmpty(formData.name == "");
+      setIsUsernameEmpty(formData.username == "");
+      setIsEmailEmpty(formData.email == "");
+      setIsPasswordEmpty(formData.password == "");
+      setIsConfirmPasswordEmpty(formData.confirmPassword == "");
+      setIsStartYearEmpty(formData.startYear == "");
+      setIsEndYearEmpty(formData.endYear == "");
+      setIsDepartmentEmpty(formData.department == "");
+      return;
+    }
     setIsSubmitting(true);
     setError("");
     setSuccess("");
@@ -73,7 +125,7 @@ export default function Member() {
   async function isUsernameAvailable() {
     try {
       const res = await fetch(
-        `/api/register/member?username=${formData.username}`
+        `/api/register/member?username=${formData.username}`,
       );
       const data = await res.json();
 
@@ -89,7 +141,7 @@ export default function Member() {
     }
   }
 
-  async function isEmailAvailable() {
+  async function sendEmailOtp() {
     try {
       const res = await fetch(`/api/register/member?email=${formData.email}`);
       const data = await res.json();
@@ -98,12 +150,47 @@ export default function Member() {
         setEmailAlreadyTaken(true);
       } else {
         setEmailAlreadyTaken(false);
+        const otpRes = await fetch("/api/otp/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: formData.email }),
+        });
+
+        const otpData = await otpRes.json();
+        if (!otpRes.ok) {
+          console.error("OTP error:", otpData.error);
+        }
       }
     } catch (error) {
-      console.log("Error checking email:", error);
+      console.log("Error checking email or sending OTP:", error);
     }
   }
 
+  async function verifyOtp() {
+    try {
+      const res = await fetch("/api/otp/verify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: formData.email, otp: formData.otp }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.verified) {
+        setInvalidOtp(false);
+        setValidOtp(true);
+      } else {
+        setValidOtp(false);
+        setInvalidOtp(true);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
   useEffect(() => {
     const { username, email, password, confirmPassword, startYear, endYear } =
       formData;
@@ -119,11 +206,11 @@ export default function Member() {
     setFalsePasswordFormat(password ? !passwordRegex.test(password) : false);
 
     setFalseConfirmPassword(
-      !!confirmPassword && !!password && confirmPassword !== password
+      !!confirmPassword && !!password && confirmPassword !== password,
     );
 
     setFalseEndYear(
-      !!startYear && !!endYear && Number(endYear) <= Number(startYear)
+      !!startYear && !!endYear && Number(endYear) <= Number(startYear),
     );
   }, [formData]);
 
@@ -140,16 +227,34 @@ export default function Member() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block mb-1 text-gray-700 font-medium">Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Enter your name"
-              className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
-            />
+          <div className="flex-1">
+            <div>
+              <label className="block mb-1 text-gray-700 font-medium">
+                Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter your name"
+                className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
+              />
+            </div>
+            {isNameEmpty ? (
+              <div className="text-sm flex text-[#8C1A10] mt-1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="18px"
+                  viewBox="0 -960 960 960"
+                  width="18px"
+                  fill="#8C1A10"
+                >
+                  <path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                </svg>
+                &nbsp; Please enter your name
+              </div>
+            ) : null}
           </div>
 
           <div>
@@ -202,6 +307,20 @@ export default function Member() {
                 Check
               </button>
             </div>
+            {isUsernameEmpty ? (
+              <div className="text-sm flex text-[#8C1A10] mt-1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="18px"
+                  viewBox="0 -960 960 960"
+                  width="18px"
+                  fill="#8C1A10"
+                >
+                  <path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                </svg>
+                &nbsp; Please enter your username
+              </div>
+            ) : null}
           </div>
           {formData.username && usernameAlreadyTaken ? (
             <div className="flex justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
@@ -260,12 +379,26 @@ export default function Member() {
               />
               <button
                 type="button"
-                onClick={() => isEmailAvailable()}
+                onClick={() => sendEmailOtp()}
                 className="bg-indigo-500 w-[20%] outline-none text-white px-4 py-2 rounded-r-md hover:bg-indigo-700 hover:cursor-pointer"
               >
                 Send OTP
               </button>
             </div>
+            {isEmailEmpty ? (
+              <div className="text-sm flex text-[#8C1A10] mt-1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="18px"
+                  viewBox="0 -960 960 960"
+                  width="18px"
+                  fill="#8C1A10"
+                >
+                  <path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                </svg>
+                &nbsp; Please enter your email
+              </div>
+            ) : null}
           </div>
           {emailAlreadyTaken ? (
             <div className="flex justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
@@ -302,12 +435,21 @@ export default function Member() {
             <div className="flex items-center border border-gray-300 rounded-md">
               <input
                 type="text"
+                name="otp"
                 placeholder="123456"
+                value={formData.otp}
+                onChange={handleChange}
                 className="flex-1 px-4 py-2 outline-none"
               />
               <button
                 type="button"
-                className="bg-indigo-500 outline-none w-[20%] text-white px-4 py-2 rounded-r-md hover:bg-indigo-700 hover:cursor-pointer"
+                onClick={verifyOtp}
+                disabled={validOtp}
+                className={`bg-indigo-500 outline-none w-[20%] text-white px-4 py-2 rounded-r-md hover:bg-indigo-700 hover:cursor-pointer ${
+                  validOtp
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:cursor-pointer"
+                }`}
               >
                 Verify
               </button>
@@ -343,53 +485,103 @@ export default function Member() {
           ) : null}
           <div className="flex gap-4">
             <div className="flex-1">
-              <div className="flex items-center">
-                <div className="mr-1">
-                  <label className="block mb-1 text-gray-700 font-medium">
-                    Password
-                  </label>
-                </div>
-                <div>
-                  <Tooltip
-                    content="Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character (e.g., @, #, $, !, %, *, ?, &)."
-                    position="top"
-                  >
-                    <svg
-                      className="mr-2"
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="18px"
-                      viewBox="0 -960 960 960"
-                      width="18px"
-                      fill="#141414"
+              <div>
+                <div className="flex items-center">
+                  <div className="mr-1">
+                    <label className="block mb-1 text-gray-700 font-medium">
+                      Password
+                    </label>
+                  </div>
+                  <div>
+                    <Tooltip
+                      content="Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character (e.g., @, #, $, !, %, *, ?, &)."
+                      position="top"
                     >
-                      <path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
-                    </svg>
-                  </Tooltip>
+                      <svg
+                        className="mr-2"
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="18px"
+                        viewBox="0 -960 960 960"
+                        width="18px"
+                        fill="#141414"
+                      >
+                        <path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                      </svg>
+                    </Tooltip>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="••••••"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
+                  />
                 </div>
               </div>
-              <div className="flex items-center border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-200">
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Set your password"
-                  className="w-full px-4 py-2 outline-none"
-                />
-              </div>
+              {isPasswordEmpty ? (
+                <div className="text-sm flex text-[#8C1A10] mt-1">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="18px"
+                    viewBox="0 -960 960 960"
+                    width="18px"
+                    fill="#8C1A10"
+                  >
+                    <path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                  </svg>
+                  &nbsp; Please enter password
+                </div>
+              ) : null}
             </div>
             <div className="flex-1">
-              <label className="block mb-1 text-gray-700 font-medium">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Confirm password"
-                className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
-              />
+              <div>
+                <div className="flex items-center">
+                  <label className="block mb-1 text-gray-700 font-medium">
+                    Confirm Password&nbsp;
+                  </label>
+                  <svg
+                    onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="20px"
+                    viewBox="0 -960 960 960"
+                    width="20px"
+                    fill="#000000"
+                  >
+                    <path
+                      d={
+                        isPasswordVisible
+                          ? "M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"
+                          : "m644-428-58-58q9-47-27-88t-93-32l-58-58q17-8 34.5-12t37.5-4q75 0 127.5 52.5T660-500q0 20-4 37.5T644-428Zm128 126-58-56q38-29 67.5-63.5T832-500q-50-101-143.5-160.5T480-720q-29 0-57 4t-55 12l-62-62q41-17 84-25.5t90-8.5q151 0 269 83.5T920-500q-23 59-60.5 109.5T772-302Zm20 246L624-222q-35 11-70.5 16.5T480-200q-151 0-269-83.5T40-500q21-53 53-98.5t73-81.5L56-792l56-56 736 736-56 56ZM222-624q-29 26-53 57t-41 67q50 101 143.5 160.5T480-280q20 0 39-2.5t39-5.5l-36-38q-11 3-21 4.5t-21 1.5q-75 0-127.5-52.5T300-500q0-11 1.5-21t4.5-21l-84-82Zm319 93Zm-151 75Z"
+                      }
+                    />
+                  </svg>
+                </div>
+                <input
+                  type={isPasswordVisible ? "text" : "password"}
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="superstrongpassword"
+                  className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
+                />
+              </div>
+              {isConfirmPasswordEmpty ? (
+                <div className="text-sm flex text-[#8C1A10] mt-1">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="18px"
+                    viewBox="0 -960 960 960"
+                    width="18px"
+                    fill="#8C1A10"
+                  >
+                    <path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                  </svg>
+                  &nbsp; Please enter confirm password
+                </div>
+              ) : null}
             </div>
           </div>
           {falsePasswordFormat ? (
@@ -436,30 +628,62 @@ export default function Member() {
 
           <div className="flex gap-4">
             <div className="flex-1">
-              <label className="block mb-1 text-gray-700 font-medium">
-                Start Year
-              </label>
-              <input
-                type="number"
-                name="startYear"
-                value={formData.startYear}
-                onChange={handleChange}
-                placeholder="2023"
-                className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
-              />
+              <div>
+                <label className="block mb-1 text-gray-700 font-medium">
+                  Start Year
+                </label>
+                <input
+                  type="number"
+                  name="startYear"
+                  value={formData.startYear}
+                  onChange={handleChange}
+                  placeholder="2023"
+                  className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
+                />
+              </div>
+              {isStartYearEmpty ? (
+                <div className="text-sm flex text-[#8C1A10] mt-1">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="18px"
+                    viewBox="0 -960 960 960"
+                    width="18px"
+                    fill="#8C1A10"
+                  >
+                    <path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                  </svg>
+                  &nbsp; Please enter graduation start year
+                </div>
+              ) : null}
             </div>
             <div className="flex-1">
-              <label className="block mb-1 text-gray-700 font-medium">
-                End Year
-              </label>
-              <input
-                type="number"
-                name="endYear"
-                value={formData.endYear}
-                onChange={handleChange}
-                placeholder="2027"
-                className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
-              />
+              <div>
+                <label className="block mb-1 text-gray-700 font-medium">
+                  End Year
+                </label>
+                <input
+                  type="number"
+                  name="endYear"
+                  value={formData.endYear}
+                  onChange={handleChange}
+                  placeholder="2027"
+                  className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
+                />
+              </div>
+              {isEndYearEmpty ? (
+                <div className="text-sm flex text-[#8C1A10] mt-1">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="18px"
+                    viewBox="0 -960 960 960"
+                    width="18px"
+                    fill="#8C1A10"
+                  >
+                    <path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                  </svg>
+                  &nbsp; Please enter graduation end year
+                </div>
+              ) : null}
             </div>
           </div>
           {falseEndYear ? (
@@ -523,14 +747,30 @@ export default function Member() {
                 </option>
               ))}
             </select>
+            {isDepartmentEmpty ? (
+              <div className="text-sm flex text-[#8C1A10] mt-1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="18px"
+                  viewBox="0 -960 960 960"
+                  width="18px"
+                  fill="#8C1A10"
+                >
+                  <path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                </svg>
+                &nbsp; Please select your department
+              </div>
+            ) : null}
           </div>
 
           <div className="text-center">
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`w-full bg-indigo-500 text-white px-6 py-2 rounded-md font-semibold transition hover:bg-indigo-700 hover:cursor-pointer ${
-                isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+              className={`w-full bg-indigo-500 text-white px-6 py-2 rounded-md font-semibold transition hover:bg-indigo-700 ${
+                isSubmitting
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:cursor-pointer"
               }`}
             >
               {isSubmitting ? "Submitting..." : "Register Member"}
