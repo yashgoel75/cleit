@@ -6,16 +6,17 @@ import { useState, useEffect } from "react";
 import Member from "./Member/page";
 import Society from "./Society/page";
 import "./page.css";
+import Footer from "../Footer/page";
 
 export default function Register() {
   const [registerAsMember, setRegisterAsMember] = useState(true);
   const [registerAsSociety, setRegisterAsSociety] = useState(false);
   return (
     <>
-      
       <div className="flex justify-center onest-normal">
         <Image src={logo} width={200} alt="cleit"></Image>
       </div>
+      <div className="border-1 border-gray-200 mt-2"></div>
       <div className="flex gap-4 justify-center mt-10 mb-5">
         <div
           onClick={() => {
@@ -42,6 +43,7 @@ export default function Register() {
       </div>
       {registerAsMember ? <Member></Member> : null}
       {registerAsSociety ? <Society></Society> : null}
+      <Footer></Footer>
     </>
   );
 }

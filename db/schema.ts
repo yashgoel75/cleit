@@ -39,7 +39,7 @@ const user = new Schema({
   reminders: [{ societyUsername: String }],
 });
 
-const User = mongoose.model("User", user);
-const Society = mongoose.model("Society", society);
+const User = mongoose.models.User || mongoose.model("User", user);
+const Society = mongoose.models.Society || mongoose.model("Society", society);
 
 export { User, Society };

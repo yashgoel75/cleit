@@ -1,118 +1,122 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
-import "./page.css";
 import Tooltip from "@/app/Tooltip/page";
 
-export default function Member() {
-  const router = useRouter();
-
+export default function Society() {
   const [formData, setFormData] = useState({
     name: "",
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
-    startYear: "",
-    endYear: "",
-    department: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
   const [falseUsernameFormat, setFalseUsernameFormat] = useState(false);
   const [falseEmailFormat, setFalseEmailFormat] = useState(false);
   const [falsePasswordFormat, setFalsePasswordFormat] = useState(false);
   const [falseConfirmPassword, setFalseConfirmPassword] = useState(false);
-  const [falseEndYear, setFalseEndYear] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const [invalidOtp, setInvalidOtp] = useState(false);
+  const [validOtp, setValidOtp] = useState(false);
+
+  const [usernameAlreadyTaken, setUsernameAlreadyTaken] = useState(false);
+  const [usernameAvailable, setUsernameAvailable] = useState(false);
+  const [emailAlreadyTaken, setEmailAlreadyTaken] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const updatedFormData = {
-      ...formData,
-      [name]: value,
-    };
+    setFormData((prev) => ({ ...prev, [name]: value }));
 
-    setFormData(updatedFormData);
-
-    if (
-      updatedFormData.startYear &&
-      updatedFormData.endYear &&
-      Number(updatedFormData.endYear) <= Number(updatedFormData.startYear)
-    ) {
-      setFalseEndYear(true);
-    } else {
-      setFalseEndYear(false);
+    if (name === "username") {
+      setUsernameAvailable(false);
+      setUsernameAlreadyTaken(false);
     }
-
-    if (
-      updatedFormData.password &&
-      updatedFormData.confirmPassword &&
-      updatedFormData.confirmPassword !== updatedFormData.password
-    ) {
-      setFalseConfirmPassword(true);
-    } else {
-      setFalseConfirmPassword(false);
-    }
-
-    const usernameRegex = /^[a-zA-Z0-9._]{3,20}$/;
-    if (
-      updatedFormData.username &&
-      !usernameRegex.test(updatedFormData.username)
-    ) {
-      setFalseUsernameFormat(true);
-    } else {
-      setFalseUsernameFormat(false);
-    }
-
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (updatedFormData.email && !emailRegex.test(updatedFormData.email)) {
-      setFalseEmailFormat(true);
-    } else {
-      setFalseEmailFormat(false);
-    }
-
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&])[A-Za-z\d@$!%*?#&]{8,}$/;
-    if (
-      updatedFormData.password &&
-      !passwordRegex.test(updatedFormData.password)
-    ) {
-      setFalsePasswordFormat(true);
-    } else {
-      setFalsePasswordFormat(false);
+    if (name === "email") {
+      setEmailAlreadyTaken(false);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setError("");
     setSuccess("");
+    setError("");
 
     try {
-      const res = await axios.post("/api/register/member", formData);
+      const res = await axios.post("/api/register/society", formData);
       if (res.status === 200) {
-        setSuccess("Registration successful! Redirecting...");
-        setTimeout(() => router.push("/Dashboard"), 1500);
+        setSuccess("Society registered successfully!");
       }
     } catch (err) {
-      setError("Registration failed. Please try again.");
       console.error(err);
+      setError("Registration failed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  async function isUsernameAvailable() {
+    try {
+      const res = await fetch(
+        `/api/register/society?username=${formData.username}`
+      );
+      const data = await res.json();
+
+      if (data.usernameExists) {
+        setUsernameAvailable(false);
+        setUsernameAlreadyTaken(true);
+      } else {
+        setUsernameAlreadyTaken(false);
+        setUsernameAvailable(true);
+      }
+    } catch (error) {
+      console.error("Error checking username:", error);
+    }
+  }
+
+  async function isEmailAvailable() {
+    try {
+      const res = await fetch(`/api/register/society?email=${formData.email}`);
+      const data = await res.json();
+
+      if (data.emailExists) {
+        setEmailAlreadyTaken(true);
+      } else {
+        setEmailAlreadyTaken(false);
+      }
+    } catch (error) {
+      console.log("Error checking email:", error);
+    }
+  }
+
+
+  useEffect(() => {
+    const { username, email, password, confirmPassword } = formData;
+
+    const usernameRegex = /^[a-zA-Z0-9._]{3,20}$/;
+    setFalseUsernameFormat(username ? !usernameRegex.test(username) : false);
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    setFalseEmailFormat(email ? !emailRegex.test(email) : false);
+
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&])[A-Za-z\d@$!%*?#&]{8,}$/;
+    setFalsePasswordFormat(password ? !passwordRegex.test(password) : false);
+
+    setFalseConfirmPassword(
+      !!confirmPassword && !!password && confirmPassword !== password
+    );
+  }, [formData]);
+
   return (
     <div className="w-[98%] md:w-1/2 mx-auto font-sans">
       <div className="border border-gray-300 p-6 rounded-xl shadow-md bg-white mb-8">
         <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
-          Member Registration
+          Society Registration
         </h1>
 
         {error && <p className="text-red-600 text-center mb-4">{error}</p>}
@@ -122,13 +126,15 @@ export default function Member() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block mb-1 text-gray-700 font-medium">Name</label>
+            <label className="block mb-1 text-gray-700 font-medium">
+              Society Name
+            </label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Enter your name"
+              placeholder="Enter society name"
               className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
             />
           </div>
@@ -170,12 +176,48 @@ export default function Member() {
               />
               <button
                 type="button"
-                className="bg-indigo-500 w-[20%] outline-none text-white px-4 py-2 rounded-r-md hover:bg-indigo-700 hover:cursor-pointer"
+                onClick={() => {
+                  isUsernameAvailable();
+                }}
+                disabled={falseUsernameFormat}
+                className={`bg-indigo-500 outline-none w-[20%] text-white px-4 py-2 rounded-r-md hover:bg-indigo-700 ${
+                  falseUsernameFormat
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:cursor-pointer"
+                }`}
               >
                 Check
               </button>
             </div>
           </div>
+          {usernameAlreadyTaken ? (
+            <div className="flex justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="22px"
+                viewBox="0 -960 960 960"
+                width="22px"
+                fill="#992B15"
+              >
+                <path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z" />
+              </svg>
+              &nbsp; Username already taken
+            </div>
+          ) : null}
+          {usernameAvailable ? (
+            <div className="flex justify-center items-center bg-green-300 text-[#408118ff] rounded px-3 text-center py-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#408118ff"
+              >
+                <path d="m344-60-76-128-144-32 14-148-98-112 98-112-14-148 144-32 76-128 136 58 136-58 76 128 144 32-14 148 98 112-98 112 14 148-144 32-76 128-136-58-136 58Zm34-102 102-44 104 44 56-96 110-26-10-112 74-84-74-86 10-112-110-24-58-96-102 44-104-44-56 96-110 24 10 112-74 86 74 84-10 114 110 24 58 96Zm102-318Zm-42 142 226-226-56-58-170 170-86-84-56 56 142 142Z" />
+              </svg>
+              &nbsp; Username available
+            </div>
+          ) : null}
           {falseUsernameFormat ? (
             <div className="flex justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
               <svg
@@ -205,12 +247,27 @@ export default function Member() {
               />
               <button
                 type="button"
-                className="bg-indigo-500 w-[20%] outline-none text-white px-4 py-2 rounded-r-md hover:bg-indigo-700 hover:cursor-pointer"
+                onClick={() => isEmailAvailable()}
+                className="bg-indigo-500 outline-none w-[20%] text-white px-4 py-2 rounded-r-md hover:bg-indigo-700 hover:cursor-pointer"
               >
                 Send OTP
               </button>
             </div>
           </div>
+          {emailAlreadyTaken ? (
+            <div className="flex justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="22px"
+                viewBox="0 -960 960 960"
+                width="22px"
+                fill="#992B15"
+              >
+                <path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z" />
+              </svg>
+              &nbsp; Email ID already in use
+            </div>
+          ) : null}
           {falseEmailFormat ? (
             <div className="flex justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
               <svg
@@ -243,12 +300,39 @@ export default function Member() {
               </button>
             </div>
           </div>
-
+          {invalidOtp ? (
+            <div className="flex justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="22px"
+                viewBox="0 -960 960 960"
+                width="22px"
+                fill="#992B15"
+              >
+                <path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z" />
+              </svg>
+              &nbsp; The entered OTP is invalid. Kindly verify and re-enter.
+            </div>
+          ) : null}
+          {validOtp ? (
+            <div className="flex justify-center items-center bg-green-300 text-[#408118ff] rounded px-3 text-center py-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#408118ff"
+              >
+                <path d="m344-60-76-128-144-32 14-148-98-112 98-112-14-148 144-32 76-128 136 58 136-58 76 128 144 32-14 148 98 112-98 112 14 148-144 32-76 128-136-58-136 58Zm34-102 102-44 104 44 56-96 110-26-10-112 74-84-74-86 10-112-110-24-58-96-102 44-104-44-56 96-110 24 10 112-74 86 74 84-10 114 110 24 58 96Zm102-318Zm-42 142 226-226-56-58-170 170-86-84-56 56 142 142Z" />
+              </svg>
+              &nbsp; OTP verified successfully
+            </div>
+          ) : null}
           <div className="flex gap-4">
             <div className="flex-1">
               <div className="flex items-center">
-                <div className="mr-1">
-                  <label className="block mb-1 text-gray-700 font-medium">
+                <div>
+                  <label className="block mb-1 text-gray-700 font-medium mr-1">
                     Password
                   </label>
                 </div>
@@ -270,16 +354,14 @@ export default function Member() {
                   </Tooltip>
                 </div>
               </div>
-              <div className="flex items-center border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-200">
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Set your password"
-                  className="w-full px-4 py-2 outline-none"
-                />
-              </div>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Set your password"
+                className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
+              />
             </div>
             <div className="flex-1">
               <label className="block mb-1 text-gray-700 font-medium">
@@ -290,7 +372,7 @@ export default function Member() {
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                placeholder="Confirm password"
+                placeholder="Cofirm password"
                 className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
               />
             </div>
@@ -324,9 +406,7 @@ export default function Member() {
             </div>
           ) : null}
           {/* <div>
-            <label className="block mb-1 text-gray-700 font-medium">
-              Mobile
-            </label>
+            <label className="block mb-1 text-gray-700 font-medium">Mobile</label>
             <input
               type="tel"
               name="mobile"
@@ -337,106 +417,15 @@ export default function Member() {
             />
           </div> */}
 
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label className="block mb-1 text-gray-700 font-medium">
-                Start Year
-              </label>
-              <input
-                type="number"
-                name="startYear"
-                value={formData.startYear}
-                onChange={handleChange}
-                placeholder="2023"
-                className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block mb-1 text-gray-700 font-medium">
-                End Year
-              </label>
-              <input
-                type="number"
-                name="endYear"
-                value={formData.endYear}
-                onChange={handleChange}
-                placeholder="2027"
-                className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
-              />
-            </div>
-          </div>
-          {falseEndYear ? (
-            <div className="flex justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="22px"
-                viewBox="0 -960 960 960"
-                width="22px"
-                fill="#992B15"
-              >
-                <path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z" />
-              </svg>
-              &nbsp; Graduation end year must be later than the start year.{" "}
-            </div>
-          ) : null}
-
-          <div>
-            <label className="block mb-1 text-gray-700 font-medium">
-              Department & Branch
-            </label>
-            <select
-              name="department"
-              value={formData.department}
-              onChange={handleChange}
-              className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
-            >
-              <option value="">Select...</option>
-              {[
-                "BALLB (H)",
-                "BBALLB (H)",
-                "LL.M (CL)",
-                "LL.M (ADR)",
-                "BBA - 1st Shift",
-                "BBA - 2nd Shift",
-                "B.Com (H)- 1st shift",
-                "B.Com (H)- 2nd shift",
-                "BA(JMC)- 1st shift",
-                "BA(JMC)- 2nd shift",
-                "MAMC",
-                "BCA- 1st shift",
-                "BCA- 2nd shift",
-                "MCA",
-                "BA ECO (H)- 1st shift",
-                "BA ECO (H)- 2nd shift",
-                "MA (ECONOMICS)",
-                "BA ENGLISH (H)",
-                "MA (ENGLISH)",
-                "B.Tech CSE",
-                "B.Tech AI&ML",
-                "B.Tech AI&DS",
-                "B.Tech IIOT",
-                "B.Tech EE (VLSI Design & Technology)",
-                "B.Tech CSE (Cyber Security)",
-                "B.Tech CS(Applied Mathematics)",
-                "B.Tech (LE)- Diploma Holders",
-                "B.Tech (LE)- BSc Graduates",
-              ].map((dept) => (
-                <option key={dept} value={dept}>
-                  {dept}
-                </option>
-              ))}
-            </select>
-          </div>
-
           <div className="text-center">
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`w-full bg-indigo-500 text-white px-6 py-2 rounded-md font-semibold transition hover:bg-indigo-700 hover:cursor-pointer ${
+              className={`w-full bg-indigo-500 outline-none text-white px-6 py-2 rounded-md font-semibold transition hover:bg-indigo-700 hover:cursor-pointer ${
                 isSubmitting ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {isSubmitting ? "Submitting..." : "Register Member"}
+              {isSubmitting ? "Registering..." : "Register Society"}
             </button>
           </div>
         </form>
