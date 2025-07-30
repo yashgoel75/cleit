@@ -3,7 +3,7 @@ export default function Footer() {
   const year = fullDate.getFullYear();
   return (
     <>
-      <div className="bottom-0 text-center py-4 bg-gray-100 w-full">
+      <div className="bottom-0 left-0 w-full bg-gray-100 text-center py-4 shadow">
         &copy;&nbsp;{year} Cleit. All rights reserved.
       </div>
     </>
