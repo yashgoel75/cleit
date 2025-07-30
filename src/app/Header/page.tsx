@@ -2,15 +2,46 @@
 
 import logo from "@/assets/cleit.png";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Header() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const router = useRouter();
+
   return (
     <>
       <div className="flex items-center justify-between px-5">
-        <Image src={logo} className="px-5" width={270} alt="Cleit"></Image>
-        <div className="flex items-center gap-4">
+        <Image
+          src={logo}
+          className="md:px-5"
+          width={isMobile ? 110 : 270}
+          alt="Cleit"
+        ></Image>
+        <div>
+          <svg
+            className="block lg:hidden"
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="#000000"
+          >
+            <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
+          </svg>
+        </div>
+        <div className="lg:flex hidden items-center gap-4">
           <div
             onClick={() => router.push("/auth/Login")}
             className="px-3  text-[17px] py-1 bg-gray-900 text-white border-gray-900 border -1 border-gray-900 rounded-md hover:cursor-pointer hover:bg-gray-700"
