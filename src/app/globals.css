@@ -17,3 +17,8 @@ body {
   font-family: 'Inter', Arial, Helvetica, sans-serif;
   transition: 0.2s ease;
 }
+.background-container {
+      background-image: url('../../public/p6.png');
+      background-size: auto; /* Adjust as needed */
+      background-position: center; /* Adjust as needed */
+    }

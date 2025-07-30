@@ -12,13 +12,13 @@ export default function Header() {
         <Image src={logo} className="px-5" width={270} alt="Cleit"></Image>
         <div className="flex items-center gap-4">
           <div
-            onClick={() => router.push("/Login")}
+            onClick={() => router.push("/auth/Login")}
             className="px-3  text-[17px] py-1 bg-gray-900 text-white border-gray-900 border -1 border-gray-900 rounded-md hover:cursor-pointer hover:bg-gray-700"
           >
             Login
           </div>
           <div
-            onClick={() => router.push("/Register")}
+            onClick={() => router.push("/auth/Register")}
             className="px-3 text-[17px] py-1 mr-5 rounded-md border-1 border-gray-300 hover:bg-zinc-100 hover:cursor-pointer"
           >
             Register
