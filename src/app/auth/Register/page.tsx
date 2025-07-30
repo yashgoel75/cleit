@@ -9,15 +9,28 @@ import "./page.css";
 import Footer from "../Footer/page";
 
 export default function Register() {
+  const [isMobile, setIsMobile] = useState(false);
   const [registerAsMember, setRegisterAsMember] = useState(true);
   const [registerAsSociety, setRegisterAsSociety] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <>
       <div className="flex justify-center onest-normal">
-        <Image src={logo} width={200} alt="cleit"></Image>
+        <Image src={logo} width={isMobile ? 150 : 200} alt="cleit"></Image>
       </div>
       <div className="border-1 border-gray-200 mt-2"></div>
-      <div className="flex gap-4 justify-center mt-10 mb-5">
+      <div className="flex gap-2 md:gap-4 justify-center mt-10 mb-5">
         <div
           onClick={() => {
             setRegisterAsMember(true);

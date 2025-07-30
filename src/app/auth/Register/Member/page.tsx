@@ -19,7 +19,7 @@ export default function Member() {
     endYear: "",
     department: "",
   });
-
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -215,9 +215,9 @@ export default function Member() {
   }, [formData]);
 
   return (
-    <div className="w-[98%] md:w-1/2 mx-auto">
-      <div className="border border-gray-300 p-6 rounded-xl shadow-md bg-white mb-8">
-        <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
+    <div className="w-[95%] md:w-[80%] lg:w-[60%] mx-auto">
+      <div className="border border-gray-300 p-4 md:p-6 rounded-xl shadow-md bg-white mb-8">
+        <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-center mb-6 text-gray-800">
           Member Registration
         </h1>
 
@@ -226,7 +226,10 @@ export default function Member() {
           <p className="text-green-600 text-center mb-4">{success}</p>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-1 md:space-y-2 lg:space-y-4"
+        >
           <div className="flex-1">
             <div>
               <label className="block mb-1 text-gray-700 font-medium">
@@ -298,7 +301,7 @@ export default function Member() {
                   isUsernameAvailable();
                 }}
                 disabled={falseUsernameFormat}
-                className={`bg-indigo-500 w-[20%] outline-none text-white px-4 py-2 rounded-r-md hover:bg-indigo-700 ${
+                className={`bg-indigo-500 w-[30%] text-center lg:w-[20%] outline-none text-white px-1 md:px-2 lg:px-4 py-2 rounded-r-md hover:bg-indigo-700 ${
                   falseUsernameFormat
                     ? "opacity-50 cursor-not-allowed"
                     : "hover:cursor-pointer"
@@ -380,7 +383,7 @@ export default function Member() {
               <button
                 type="button"
                 onClick={() => sendEmailOtp()}
-                className="bg-indigo-500 w-[20%] outline-none text-white px-4 py-2 rounded-r-md hover:bg-indigo-700 hover:cursor-pointer"
+                className="bg-indigo-500 w-[30%] lg:w-[20%] outline-none text-white px-1 md:px-2 lg:px-4 md:px-2 lg:px-4 py-2 rounded-r-md hover:bg-indigo-700 hover:cursor-pointer"
               >
                 Send OTP
               </button>
@@ -445,7 +448,7 @@ export default function Member() {
                 type="button"
                 onClick={verifyOtp}
                 disabled={validOtp}
-                className={`bg-indigo-500 outline-none w-[20%] text-white px-4 py-2 rounded-r-md hover:bg-indigo-700 hover:cursor-pointer ${
+                className={`bg-indigo-500 outline-none w-[30%] lg:w-[20%] text-white px-1 md:px-2 lg:px-4 py-2 rounded-r-md hover:bg-indigo-700 hover:cursor-pointer ${
                   validOtp
                     ? "opacity-50 cursor-not-allowed"
                     : "hover:cursor-pointer"
@@ -483,7 +486,7 @@ export default function Member() {
               &nbsp; OTP verified successfully
             </div>
           ) : null}
-          <div className="flex gap-4">
+          <div className="flex-1 space-y-1 md:flex gap-4">
             <div className="flex-1">
               <div>
                 <div className="flex items-center">
@@ -763,7 +766,7 @@ export default function Member() {
             ) : null}
           </div>
 
-          <div className="text-center">
+          <div className="text-center mt-3">
             <button
               type="submit"
               disabled={isSubmitting}
