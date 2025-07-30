@@ -18,6 +18,18 @@ export default function Login() {
     role: "",
   });
 
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -163,7 +175,7 @@ export default function Login() {
               ) : null}
             </div>
             {falseEmailFormat ? (
-              <div className="flex justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
+              <div className="flex text-sm md:text-base justify-center md:items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="22px"
@@ -226,7 +238,7 @@ export default function Login() {
               ) : null}
             </div>
             {falsePasswordFormat ? (
-              <div className="flex justify-center items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
+              <div className="flex text-sm md:text-base justify-center md:items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="22px"
