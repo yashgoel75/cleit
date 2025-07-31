@@ -4,6 +4,8 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import "./page.css";
 import Tooltip from "@/app/Tooltip/page";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../../../lib/firebase";
 
 export default function Member() {
   const router = useRouter();
@@ -120,6 +122,11 @@ export default function Member() {
     setSuccess("");
 
     try {
+      await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password,
+      );
       const res = await axios.post("/api/register/member", formData);
       if (res.status === 200) {
         setSuccess("Registration successful! Redirecting...");
