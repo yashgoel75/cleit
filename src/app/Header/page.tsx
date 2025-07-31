@@ -26,12 +26,11 @@ export default function Header() {
         <Image
           src={logo}
           className="md:px-5"
-          width={isMobile ? 110 : 270}
+          width={isMobile ? 110 : 250}
           alt="Cleit"
         ></Image>
-        <div>
+        <div className="block lg:hidden mr-5">
           <svg
-            className="block lg:hidden"
             xmlns="http://www.w3.org/2000/svg"
             height="24px"
             viewBox="0 -960 960 960"
@@ -42,6 +41,9 @@ export default function Header() {
           </svg>
         </div>
         <div className="lg:flex hidden items-center gap-4">
+          <ul className="flex items-center text-lg gap-4"></ul>
+        </div>
+        <div className="lg:flex hidden items-center gap-4 mr-5">
           <div
             onClick={() => router.push("/auth/Login")}
             className="px-3  text-[17px] py-1 bg-indigo-500 text-white border-indigo-500 border-1 rounded-md hover:cursor-pointer hover:bg-indigo-700"

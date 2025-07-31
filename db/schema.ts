@@ -1,38 +1,37 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
-const team = new Schema({
-  name: String,
-  designation: String,
-  mobile: String,
-  email: String,
-});
-const social = new Schema({
-  name: String,
-  handle: String,
-});
-const eligibility = new Schema({
-  name: String,
-});
-const society = new Schema({
-  name: String,
-  username: String,
-  logo: String,
-  email: String,
-  password: String,
-  about: String,
-  team: [team],
-  social: [social],
-  auditionOpen: Boolean,
-  eligibility: [eligibility],
-});
+// const team = new Schema({
+//   name: String,
+//   designation: String,
+//   mobile: String,
+//   email: String,
+// });
+// const social = new Schema({
+//   name: String,
+//   handle: String,
+// });
+// const eligibility = new Schema({
+//   name: String,
+// });
+// const society = new Schema({
+//   name: String,
+//   username: String,
+//   logo: String,
+//   email: String,
+//   password: String,
+//   about: String,
+//   team: [team],
+//   social: [social],
+//   auditionOpen: Boolean,
+//   eligibility: [eligibility],
+// });
 const user = new Schema({
   name: String,
   username: String,
   email: String,
   password: String,
-  branch: String,
-  section: String,
+  department: String,
   batchStart: Number,
   batchEnd: Number,
   wishlist: [{ societyUsername: String }],
@@ -40,6 +39,6 @@ const user = new Schema({
 });
 
 const User = mongoose.models.User || mongoose.model("User", user);
-const Society = mongoose.models.Society || mongoose.model("Society", society);
+// const Society = mongoose.models.Society || mongoose.model("Society", society);
 
-export { User, Society };
+export { User };
