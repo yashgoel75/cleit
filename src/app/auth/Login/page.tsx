@@ -132,7 +132,7 @@ export default function Login() {
   return (
     <>
       <div className="flex justify-center">
-        <Image src={logo} width={200} alt="cleit"></Image>
+        <Image src={logo} width={isMobile ? 150 : 200} alt="cleit"></Image>
       </div>
       <div className="border-1 border-gray-200 mt-2"></div>
       <div className="w-[95%] md:w-[80%] lg:w-[60%] mx-auto pt-10 onest-normal">
@@ -178,9 +178,9 @@ export default function Login() {
               <div className="flex text-sm md:text-base justify-center md:items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  height="22px"
+                  height={isMobile ? "20px" : "24px"}
                   viewBox="0 -960 960 960"
-                  width="22px"
+                  width={isMobile ? "20px" : "24px"}
                   fill="#992B15"
                 >
                   <path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z" />
@@ -241,9 +241,9 @@ export default function Login() {
               <div className="flex text-sm md:text-base justify-center md:items-center bg-red-300 text-red-800 rounded px-3 text-center py-1">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  height="22px"
+                  height={isMobile ? "20px" : "24px"}
                   viewBox="0 -960 960 960"
-                  width="22px"
+                  width={isMobile ? "20px" : "24px"}
                   fill="#992B15"
                 >
                   <path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z" />
@@ -251,38 +251,7 @@ export default function Login() {
                 &nbsp; Please enter a valid password format
               </div>
             ) : null}
-            <div>
-              <label className="block mb-1 text-gray-700 font-medium">
-                Who’s logging in?
-              </label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
-              >
-                <option value="">Select...</option>
-                {["Member", "Society"].map((dept) => (
-                  <option key={dept} value={dept}>
-                    {dept}
-                  </option>
-                ))}
-              </select>
-              {isRoleEmpty ? (
-                <div className="text-sm flex text-[#8C1A10] mt-1">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="18px"
-                    viewBox="0 -960 960 960"
-                    width="18px"
-                    fill="#8C1A10"
-                  >
-                    <path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
-                  </svg>
-                  &nbsp; Please select your account type
-                </div>
-              ) : null}
-            </div>
+
             <div className="text-center">
               <button
                 type="submit"
@@ -294,13 +263,13 @@ export default function Login() {
           </form>
         </div>
         <div className="text-center">
-          Don't have an account?{" "}
+          Don't have an account?&nbsp;
           <Link href={"/auth/Register"}>
             <u>Create one now.</u>
           </Link>
         </div>
       </div>
-      <div className="md:fixed w-full md:bottom-0 mt-5">
+      <div className="fixed w-full bottom-0 mt-5">
         <Footer />
       </div>
     </>
