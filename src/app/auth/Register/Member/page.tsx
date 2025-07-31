@@ -240,7 +240,7 @@ export default function Member() {
 
   return (
     <div className="w-[95%] md:w-[80%] lg:w-[60%] mx-auto">
-      <div className="border border-gray-300 p-4 md:p-6 rounded-xl shadow-md bg-white mb-8">
+      <div className="border md:text-lg border-gray-300 p-4 md:p-6 rounded-xl shadow-md bg-white mb-8">
         <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
           Sign Up
         </h1>
@@ -364,13 +364,13 @@ export default function Member() {
             </div>
           ) : null}
           {formData.username && usernameAvailable ? (
-            <div className="flex text-sm md:text-base justify-center items-center bg-green-300 text-[#408118ff] rounded px-3 text-center py-1">
+            <div className="flex text-sm md:text-base justify-center items-center bg-green-500 text-[#264d0fff] rounded px-3 text-center py-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height={isMobile ? "20px" : "24px"}
                 viewBox="0 -960 960 960"
                 width={isMobile ? "20px" : "24px"}
-                fill="#408118ff"
+                fill="#264d0fff"
               >
                 <path d="m344-60-76-128-144-32 14-148-98-112 98-112-14-148 144-32 76-128 136 58 136-58 76 128 144 32-14 148 98 112-98 112 14 148-144 32-76 128-136-58-136 58Zm34-102 102-44 104 44 56-96 110-26-10-112 74-84-74-86 10-112-110-24-58-96-102 44-104-44-56 96-110 24 10 112-74 86 74 84-10 114 110 24 58 96Zm102-318Zm-42 142 226-226-56-58-170 170-86-84-56 56 142 142Z" />
               </svg>
@@ -512,13 +512,13 @@ export default function Member() {
             </div>
           ) : null}
           {validOtp ? (
-            <div className="flex text-sm md:text-base justify-center items-center bg-green-300 text-[#408118ff] rounded px-3 text-center py-1">
+            <div className="flex text-sm md:text-base justify-center items-center bg-green-500 text-[#264d0fff] rounded px-3 text-center py-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
                 viewBox="0 -960 960 960"
                 width="24px"
-                fill="#408118ff"
+                fill="#264d0fff"
               >
                 <path d="m344-60-76-128-144-32 14-148-98-112 98-112-14-148 144-32 76-128 136 58 136-58 76 128 144 32-14 148 98 112-98 112 14 148-144 32-76 128-136-58-136 58Zm34-102 102-44 104 44 56-96 110-26-10-112 74-84-74-86 10-112-110-24-58-96-102 44-104-44-56 96-110 24 10 112-74 86 74 84-10 114 110 24 58 96Zm102-318Zm-42 142 226-226-56-58-170 170-86-84-56 56 142 142Z" />
               </svg>
