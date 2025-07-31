@@ -4,18 +4,18 @@ import logo from "@/assets/cleit.png";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import Footer from "../Footer/page";
 import "./page.css";
 import Link from "next/link";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../../lib/firebase";
 export default function Login() {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
-    username: "",
     email: "",
     password: "",
-    role: "",
+    role: "member",
   });
 
   const [isMobile, setIsMobile] = useState(false);
@@ -33,11 +33,9 @@ export default function Login() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [falseUsernameFormat, setFalseUsernameFormat] = useState(false);
   const [falseEmailFormat, setFalseEmailFormat] = useState(false);
   const [falsePasswordFormat, setFalsePasswordFormat] = useState(false);
 
-  const [isUsernameEmpty, setIsUsernameEmpty] = useState(false);
   const [isEmailEmpty, setIsEmailEmpty] = useState(false);
   const [isPasswordEmpty, setIsPasswordEmpty] = useState(false);
   const [isRoleEmpty, setIsRoleEmpty] = useState(false);
@@ -64,12 +62,10 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (
-      formData.username == "" ||
       formData.email == "" ||
       formData.password == "" ||
       formData.role == ""
     ) {
-      setIsUsernameEmpty(formData.username == "");
       setIsEmailEmpty(formData.email == "");
       setIsPasswordEmpty(formData.password == "");
       setIsRoleEmpty(formData.role == "");
@@ -80,11 +76,9 @@ export default function Login() {
     setSuccess("");
 
     try {
-      const res = await axios.post(`/api/login/${formData.role}`, formData);
-      if (res.status === 200) {
-        setSuccess("Login successful! Redirecting...");
-        setTimeout(() => router.push("/Dashboard"), 1500);
-      }
+      await signInWithEmailAndPassword(auth, formData.email, formData.password);
+      setSuccess("Login successful! Redirecting...");
+      setTimeout(() => router.push("/Dashboard"), 1500);
     } catch (err) {
       setError("Login failed. Please try again.");
       console.error(err);
@@ -116,10 +110,7 @@ export default function Login() {
   }
 
   useEffect(() => {
-    const { username, email, password } = formData;
-
-    const usernameRegex = /^[a-zA-Z0-9._]{3,20}$/;
-    setFalseUsernameFormat(username ? !usernameRegex.test(username) : false);
+    const { email, password } = formData;
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     setFalseEmailFormat(email ? !emailRegex.test(email) : false);
