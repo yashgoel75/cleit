@@ -31,8 +31,8 @@ export default function Login() {
   }, []);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [falseEmailFormat, setFalseEmailFormat] = useState(false);
   const [falsePasswordFormat, setFalsePasswordFormat] = useState(false);
 
@@ -47,7 +47,7 @@ export default function Login() {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-
+    setError(false);
     if (name === "email") {
       setIsEmailEmpty(false);
     }
@@ -72,16 +72,16 @@ export default function Login() {
       return;
     }
     setIsSubmitting(true);
-    setError("");
-    setSuccess("");
+    setError(false);
+    setSuccess(false);
 
     try {
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
-      setSuccess("Login successful! Redirecting...");
-      setTimeout(() => router.push("/Dashboard"), 1500);
+      setSuccess(true);
+      setTimeout(() => router.push("/"), 1500);
     } catch (err) {
-      setError("Login failed. Please try again.");
-      console.error(err);
+      setError(true);
+      // console.error(err);
     } finally {
       setIsSubmitting(false);
     }
@@ -246,12 +246,35 @@ export default function Login() {
             <div className="text-center">
               <button
                 type="submit"
-                className={`w-full bg-indigo-500 text-white px-6 py-2 rounded-md font-semibold transition hover:bg-indigo-700`}
+                disabled={isSubmitting || success}
+                className={`w-full bg-indigo-500 text-white px-6 py-2 rounded-md font-semibold transition hover:bg-indigo-700 ${
+                  isSubmitting || success
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:cursor-pointer"
+                }`}
               >
-                Login
+                {isSubmitting
+                  ? "Logging in..."
+                  : success
+                    ? "Redirecting... Please Wait"
+                    : "Login"}
               </button>
             </div>
           </form>
+          {error ? (
+            <div className="flex text-sm md:text-base justify-center items-center mt-2 bg-red-300 text-red-800 rounded px-3 text-center py-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height={isMobile ? "20px" : "24px"}
+                viewBox="0 -960 960 960"
+                width={isMobile ? "20px" : "24px"}
+                fill="#992B15"
+              >
+                <path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z" />
+              </svg>
+              &nbsp; Invalid Credentials
+            </div>
+          ) : null}
         </div>
         <div className="text-center">
           Don't have an account?&nbsp;
