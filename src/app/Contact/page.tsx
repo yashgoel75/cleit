@@ -2,7 +2,10 @@
 
 import "./page.css";
 import Header from "../Header/page";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import instagram from "@/assets/Instagram.png";
+import linkedin from "@/assets/LinkedIn.png";
+import Image from "next/image";
 
 export default function Contact() {
   const [isNameEmpty, setIsNameEmpty] = useState(false);
@@ -40,6 +43,12 @@ export default function Contact() {
     }
   };
 
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setIsMobile(true);
+    }
+  }, []);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -124,7 +133,7 @@ export default function Contact() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Enter your name"
-                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring focus:ring-indigo-200 focus:shadow-md transition"
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none hover:border-indigo-200 focus:ring focus:ring-indigo-200 focus:shadow-md transition"
                 />
                 {isNameEmpty ? (
                   <div className="text-sm flex text-[#8C1A10] mt-2">
@@ -157,7 +166,7 @@ export default function Contact() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="you@example.com"
-                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring focus:ring-indigo-200 focus:shadow-md transition"
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none hover:border-indigo-200 focus:ring focus:ring-indigo-200 focus:shadow-md transition"
                 />
                 {isEmailEmpty ? (
                   <div className="text-sm flex text-[#8C1A10] mt-2">
@@ -190,7 +199,7 @@ export default function Contact() {
                   value={formData.subject}
                   onChange={handleChange}
                   placeholder="Subject"
-                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring focus:ring-indigo-200 focus:shadow-md transition"
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none hover:border-indigo-200 focus:ring focus:ring-indigo-200 focus:shadow-md transition"
                 />
                 {isSubjectEmpty ? (
                   <div className="text-sm flex text-[#8C1A10] mt-2">
@@ -223,7 +232,7 @@ export default function Contact() {
                   value={formData.body}
                   onChange={handleChange}
                   placeholder="Your message..."
-                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring focus:ring-indigo-200 focus:shadow-md transition resize-none"
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none hover:border-indigo-200 focus:ring focus:ring-indigo-200 focus:shadow-md transition resize-none"
                 />
                 {isBodyEmpty ? (
                   <div className="text-sm flex text-[#8C1A10] mt-2">
@@ -259,6 +268,43 @@ export default function Contact() {
               </div>
             </form>
           </div>
+        </div>
+      </div>
+      <div className="bg-gray-50 py-6 px-4">
+        <div className="text-center mb-6">
+          <h3 className="text-gray-800 md:text-lg font-medium">
+            Prefer socials? Let's connect there too.
+          </h3>
+        </div>
+        <div className="flex justify-center gap-6">
+          <a
+            href="https://www.linkedin.com/in/yourprofile"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-600 hover:text-indigo-600 transition transform hover:scale-110"
+            aria-label="LinkedIn"
+          >
+            <Image
+              className="hover:shadow-lg"
+              src={linkedin}
+              width={isMobile ? 30 : 35}
+              alt="Linkedin Logo"
+            ></Image>
+          </a>
+          <a
+            href="https://instagram.com/yourprofile"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-600 hover:text-indigo-600 transition transform hover:scale-110"
+            aria-label="Instagram"
+          >
+            <Image
+              className="rounded-md hover:shadow-lg"
+              src={instagram}
+              width={isMobile ? 30 : 35}
+              alt="Instagram Logo"
+            ></Image>
+          </a>
         </div>
       </div>
     </>
