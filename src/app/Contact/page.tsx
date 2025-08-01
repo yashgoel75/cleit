@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import instagram from "@/assets/Instagram.png";
 import linkedin from "@/assets/LinkedIn.png";
 import Image from "next/image";
+import Footer from "../Footer/page";
 
 export default function Contact() {
   const [isNameEmpty, setIsNameEmpty] = useState(false);
@@ -270,13 +271,13 @@ export default function Contact() {
           </div>
         </div>
       </div>
-      <div className="bg-gray-50 py-6 px-4">
-        <div className="text-center mb-6">
-          <h3 className="text-gray-800 md:text-lg font-medium">
+      <div className="bg-gray-50 pb-10 py-6 px-4">
+        <div className="text-center">
+          <h3 className="text-gray-800 mb-6 md:text-lg font-medium">
             Prefer socials? Let's connect there too.
           </h3>
         </div>
-        <div className="flex justify-center gap-6">
+        <div className="flex justify-center gap-4 md:gap-6">
           <a
             href="https://www.linkedin.com/in/yourprofile"
             target="_blank"
@@ -289,7 +290,7 @@ export default function Contact() {
               src={linkedin}
               width={isMobile ? 30 : 35}
               alt="Linkedin Logo"
-            ></Image>
+            />
           </a>
           <a
             href="https://instagram.com/yourprofile"
@@ -303,10 +304,12 @@ export default function Contact() {
               src={instagram}
               width={isMobile ? 30 : 35}
               alt="Instagram Logo"
-            ></Image>
+            />
           </a>
         </div>
       </div>
+
+      <Footer />
     </>
   );
 }
