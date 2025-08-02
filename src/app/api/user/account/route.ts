@@ -28,14 +28,13 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-
   try {
     const body = await req.json();
-    const { userEmail, updates } = body;
+    const { userEmail, updates, wishlistAdd } = body;
 
-    if (!userEmail || !updates) {
+    if (!userEmail) {
       return NextResponse.json(
-        { error: "Missing userEmail or updates" },
+        { error: "Missing userEmail" },
         { status: 400 }
       );
     }
@@ -46,12 +45,24 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const allowedFields = ["name", "username", "branch", "batchStart", "batchEnd"];
-    allowedFields.forEach((field) => {
-      if (updates[field] !== undefined) {
-        existingUser[field] = updates[field];
+    if (updates) {
+      const allowedFields = ["name", "username", "branch", "batchStart", "batchEnd"];
+      allowedFields.forEach((field) => {
+        if (updates[field] !== undefined) {
+          existingUser[field] = updates[field];
+        }
+      });
+    }
+
+    if (wishlistAdd) {
+      const alreadyInWishlist = existingUser.wishlist.some(
+        (item: { societyUsername: string }) => item.societyUsername === wishlistAdd
+      );
+
+      if (!alreadyInWishlist) {
+        existingUser.wishlist.push({ societyUsername: wishlistAdd });
       }
-    });
+    }
 
     await existingUser.save();
 

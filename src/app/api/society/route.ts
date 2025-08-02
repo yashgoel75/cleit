@@ -7,7 +7,8 @@ export async function GET(req: NextRequest) {
     const username = searchParams.get("username")?.toLowerCase();
 
     if (!username) {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
+      const societies = await Society.find();
+      return NextResponse.json({ societies }, { status: 200 });
     }
 
     const society = await Society.findOne({ username }).select("-password -email");

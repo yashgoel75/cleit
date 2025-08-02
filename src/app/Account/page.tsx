@@ -14,7 +14,7 @@ export default function Account() {
   const [loading, setLoading] = useState(true);
   const [isEdit, setIsEdit] = useState(false);
   const [isPreview, setIsPreview] = useState(true);
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);  
   const [usernameAvailable, setUsernameAvailable] = useState(false);
   const [usernameAlreadyTaken, setUsernameAlreadyTaken] = useState(false);
   const router = useRouter();
@@ -35,7 +35,9 @@ export default function Account() {
 
   const getUserByEmail = async (email: string) => {
     try {
-      const res = await fetch(`/api/user/account?email=${encodeURIComponent(email)}`);
+      const res = await fetch(
+        `/api/user/account?email=${encodeURIComponent(email)}`,
+      );
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to fetch user data");
       setUserData(data.user);
@@ -80,7 +82,9 @@ export default function Account() {
 
   const isUsernameAvailable = async () => {
     try {
-      const res = await fetch(`/api/register/member?username=${formData.username}`);
+      const res = await fetch(
+        `/api/register/member?username=${formData.username}`,
+      );
       const data = await res.json();
 
       if (data.usernameExists) {
@@ -156,11 +160,13 @@ export default function Account() {
               {userData?.wishlist?.length > 0 ? (
                 <ul className="text-gray-700 space-y-1">
                   {userData.wishlist.map((item: any, idx: number) => (
-                    <li key={idx}>❤️ {item.societyUsername}</li>
+                    <li key={idx}>{item.societyUsername}</li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-gray-500 italic">No societies in wishlist.</p>
+                <p className="text-gray-500 italic">
+                  No societies in wishlist.
+                </p>
               )}
             </div>
 
@@ -186,7 +192,9 @@ export default function Account() {
             className="space-y-8"
           >
             <div className="bg-white p-6 rounded-xl shadow-md space-y-6">
-              <h3 className="text-2xl font-bold mb-4 text-center">Edit User Info</h3>
+              <h3 className="text-2xl font-bold mb-4 text-center">
+                Edit User Info
+              </h3>
 
               <div>
                 <label className="block font-medium mb-1">Name</label>
@@ -194,7 +202,10 @@ export default function Account() {
                   type="text"
                   value={formData?.name || ""}
                   onChange={(e) =>
-                    setFormData((prev: any) => ({ ...prev, name: e.target.value }))
+                    setFormData((prev: any) => ({
+                      ...prev,
+                      name: e.target.value,
+                    }))
                   }
                   placeholder="Enter your full name"
                   className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
@@ -254,7 +265,10 @@ export default function Account() {
                   type="text"
                   value={formData?.branch || ""}
                   onChange={(e) =>
-                    setFormData((prev: any) => ({ ...prev, branch: e.target.value }))
+                    setFormData((prev: any) => ({
+                      ...prev,
+                      branch: e.target.value,
+                    }))
                   }
                   placeholder="e.g. AIML"
                   className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
