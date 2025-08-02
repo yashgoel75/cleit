@@ -78,7 +78,7 @@ export default function Login() {
     try {
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
       setSuccess(true);
-      setTimeout(() => router.push("/"), 1500);
+      setTimeout(() => router.push("/Account"), 1500);
     } catch (err) {
       setError(true);
       // console.error(err);

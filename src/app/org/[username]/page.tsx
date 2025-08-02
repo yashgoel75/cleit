@@ -1,10 +1,5 @@
-export default function UserPage({ params }: { params: { username: string } }) {
-  const { username } = params;
+import Account from "./account";
 
-  return (
-    <div style={{ fontFamily: 'sans-serif', textAlign: 'center', marginTop: '50px' }}>
-      <h1>Welcome, @{username}!</h1>
-      <p>This is a society page.</p>
-    </div>
-  );
+export default function Page({ params }: { params: { username: string } }) {
+  return <Account username={params.username} />;
 }

@@ -1,12 +1,15 @@
 "use client";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
-import "./page.css";
 import Tooltip from "@/app/Tooltip/page";
+import Image from "next/image";
+import logo from "@/assets/cleit.png";
+import Footer from "@/app/Footer/page";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../../lib/firebase";
+import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import "./page.css";
 
 export default function Member() {
   const router = useRouter();
