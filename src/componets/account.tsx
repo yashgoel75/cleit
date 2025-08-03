@@ -52,6 +52,7 @@ export function Account({ username }: { username: string }) {
     events: Event[];
     social: SocialLink[];
     eligibility: EligibilityCriterion[];
+    type: string;
   }
 
   useEffect(() => {
@@ -147,6 +148,12 @@ export function Account({ username }: { username: string }) {
                 </span>
               </p>
             </section>
+            <section>
+              <h4 className="flex items-center text-2xl font-semibold mb-4">
+                About
+              </h4>
+              <div className="md:text-lg">{societyData?.about}</div>
+            </section>
 
             <section>
               <h4 className="text-2xl font-semibold mb-4">Team Members</h4>
@@ -172,10 +179,9 @@ export function Account({ username }: { username: string }) {
                 ))}
               </div>
             </section>
-
             <section>
               <h4 className="text-2xl font-semibold mb-4">Events</h4>
-              {societyData?.events?.length ?? 0> 0 ? (
+              {(societyData?.events?.length ?? 0 > 0) ? (
                 (() => {
                   const now = new Date();
                   const events = societyData?.events;
@@ -330,11 +336,14 @@ export function Account({ username }: { username: string }) {
               <h4 className="text-2xl font-semibold mb-4">
                 Eligibility Criteria
               </h4>
-              {Array.isArray(societyData?.eligibility) && societyData.eligibility.length > 0 ? (
+              {Array.isArray(societyData?.eligibility) &&
+              societyData.eligibility.length > 0 ? (
                 <ul className="list-disc list-inside text-gray-700 space-y-1">
-                  {societyData.eligibility!.map((e: EligibilityCriterion, i: number) => (
-                    <li key={i}>{e.name}</li>
-                  ))}
+                  {societyData.eligibility!.map(
+                    (e: EligibilityCriterion, i: number) => (
+                      <li key={i}>{e.name}</li>
+                    ),
+                  )}
                 </ul>
               ) : (
                 <p className="text-gray-500 italic">

@@ -44,6 +44,7 @@ const society = new Schema({
   events: [event],
   auditionOpen: Boolean,
   eligibility: [eligibility],
+  type: String,
 });
 const user = new Schema({
   name: String,
