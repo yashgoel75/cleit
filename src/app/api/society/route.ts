@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Society } from "../../../../db/schema";
+import { register } from "@/instrumentation";
 
 export async function GET(req: NextRequest) {
   try {
+    await register();
     const { searchParams } = new URL(req.url);
     const username = searchParams.get("username")?.toLowerCase();
 

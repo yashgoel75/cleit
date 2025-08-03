@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { User } from "../../../../../db/schema";
 import argon2 from "argon2";
+import { register } from "@/instrumentation";
 
 export async function GET(req: NextRequest) {
   try {
+    await register();
     const { searchParams } = new URL(req.url);
     const username = searchParams.get("username");
     const email = searchParams.get("email");
@@ -48,6 +50,7 @@ interface User {
   department: string
 }
 export async function POST(req: NextRequest) {
+  await register();
   const { name, username, email, password, startYear, endYear, department } =
     (await req.json()) as User;
   try {

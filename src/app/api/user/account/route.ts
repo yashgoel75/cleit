@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { User } from "../../../../../db/schema";
+import { register } from "@/instrumentation";
 
 export async function GET(req: NextRequest) {
 
   try {
+    await register();
     const { searchParams } = new URL(req.url);
     const email = searchParams.get("email")?.toLowerCase();
 
@@ -31,6 +33,7 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
+    await register();
     const body = await req.json();
     const { userEmail, updates, wishlistAdd } = body;
 

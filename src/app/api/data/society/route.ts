@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { Society } from "../../../../../db/schema";
+import {register} from "../../../../instrumentation"
 
 export async function GET() {
   try {
+    await register();
     const societies = await Society.find({}, "-password");
 
     return NextResponse.json(
