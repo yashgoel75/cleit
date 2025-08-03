@@ -18,9 +18,12 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({ society }, { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error);
+    }
     return NextResponse.json(
-      { error: "Failed to fetch society", details: error.message },
+      { error: "Failed to fetch society" },
       { status: 500 }
     );
   }

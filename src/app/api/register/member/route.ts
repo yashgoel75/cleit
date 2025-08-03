@@ -38,10 +38,18 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-
+interface User {
+  name: string,
+  username: string,
+  email: string,
+  password: string,
+  startYear: number,
+  endYear: number,
+  department: string
+}
 export async function POST(req: NextRequest) {
   const { name, username, email, password, startYear, endYear, department } =
-    (await req.json()) as any;
+    (await req.json()) as User;
   try {
     if (
       !name ||
@@ -69,8 +77,8 @@ export async function POST(req: NextRequest) {
       username,
       email,
       password: await argon2.hash(password),
-      batchStart: parseInt(startYear),
-      batchEnd: parseInt(endYear),
+      batchStart: startYear,
+      batchEnd: endYear,
       branch: department,
     });
     console.log(user);

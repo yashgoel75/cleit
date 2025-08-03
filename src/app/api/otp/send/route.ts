@@ -1,7 +1,7 @@
 import redis from '@/lib/redis';
 import { Resend } from 'resend';
 import { NextRequest, NextResponse } from 'next/server';
-const resend = new Resend('re_P5BHG8XZ_2Gz7tD25q5KmAq1wCfwJLamT');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
     const { email } = await req.json();
@@ -9,11 +9,11 @@ export async function POST(req: NextRequest) {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     await redis.set(`otp:${email}`, otp, {
-        EX: 300,
+        ex: 300,
     });
 
     try {
-        const { data } = await resend.emails.send({
+        await resend.emails.send({
             from: "Cleit <connect@yashgoel.me>",
             to: email,
             subject: "Welcome to Cleit - OTP Verification",

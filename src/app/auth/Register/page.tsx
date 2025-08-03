@@ -9,8 +9,6 @@ import Footer from "../Footer/page";
 
 export default function Register() {
   const [isMobile, setIsMobile] = useState(false);
-  const [registerAsMember, setRegisterAsMember] = useState(true);
-  // const [registerAsSociety, setRegisterAsSociety] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {

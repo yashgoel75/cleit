@@ -6,7 +6,6 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const email = searchParams.get("email")?.toLowerCase();
-    const username = searchParams.get("username");
 
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
@@ -19,9 +18,12 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({ user }, { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error);
+    }
     return NextResponse.json(
-      { error: "Failed to fetch user", details: error.message },
+      { error: "Failed to fetch user" },
       { status: 500 }
     );
   }
@@ -67,10 +69,10 @@ export async function PATCH(req: NextRequest) {
     await existingUser.save();
 
     return NextResponse.json({ success: true, user: existingUser }, { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error updating user:", error);
     return NextResponse.json(
-      { error: error.message || "Internal Server Error" },
+      { "Internal Server Error" : "Error"},
       { status: 500 }
     );
   }

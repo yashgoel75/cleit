@@ -5,19 +5,37 @@ import { onAuthStateChanged, User as FirebaseUser } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import Header from "../Header/page";
 import Footer from "@/app/Footer/page";
-import { useRouter } from "next/navigation";
 
 export default function Account() {
   const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
-  const [userData, setUserData] = useState<any>(null);
-  const [formData, setFormData] = useState<any>(null);
+  const [userData, setUserData] = useState<User | null>(null);
+  const [formData, setFormData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEdit, setIsEdit] = useState(false);
   const [isPreview, setIsPreview] = useState(true);
-  const [isUpdating, setIsUpdating] = useState(false);  
+  const [isUpdating, setIsUpdating] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState(false);
   const [usernameAlreadyTaken, setUsernameAlreadyTaken] = useState(false);
-  const router = useRouter();
+
+  interface User {
+    name: string;
+    username: string;
+    email: string;
+    password: string;
+    branch: string;
+    batchStart: number;
+    batchEnd: number;
+    wishlist: { societyUsername: string }[];
+    reminders: { societyUsername: string }[];
+  }
+
+  interface Wishlist {
+    societyUsername: string;
+  }
+
+  interface Reminders {
+    societyUsername: string;
+  }
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -68,13 +86,21 @@ export default function Account() {
         throw new Error(data.error || "Failed to update user");
       }
 
-      await getUserByEmail(formData.email);
+      if (formData?.email) {
+        const email = formData.email;
+        await getUserByEmail(email);
+      }
+
       setIsEdit(false);
       setIsPreview(true);
       setUsernameAvailable(false);
       setUsernameAlreadyTaken(false);
-    } catch (err: any) {
-      alert(`Update failed: ${err.message}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(`Update failed: ${err.message}`);
+      } else {
+        alert(`Update failed`);
+      }
     } finally {
       setIsUpdating(false);
     }
@@ -83,7 +109,7 @@ export default function Account() {
   const isUsernameAvailable = async () => {
     try {
       const res = await fetch(
-        `/api/register/member?username=${formData.username}`,
+        `/api/register/member?username=${formData?.username}`,
       );
       const data = await res.json();
 
@@ -98,6 +124,7 @@ export default function Account() {
       console.error(err);
     }
   };
+  if (!formData || !userData) return null;
 
   return (
     <>
@@ -151,7 +178,8 @@ export default function Account() {
                 Branch: {userData?.branch}
               </p>
               <p className="text-gray-700 font-medium">
-                Batch: {userData?.batchStart} - {userData?.batchEnd}
+                Batch: {Number(userData?.batchStart)} -{" "}
+                {Number(userData?.batchEnd)}
               </p>
             </div>
 
@@ -159,7 +187,7 @@ export default function Account() {
               <h4 className="text-2xl font-semibold mb-4">Wishlist</h4>
               {userData?.wishlist?.length > 0 ? (
                 <ul className="text-gray-700 space-y-1">
-                  {userData.wishlist.map((item: any, idx: number) => (
+                  {userData.wishlist.map((item: Wishlist, idx: number) => (
                     <li key={idx}>{item.societyUsername}</li>
                   ))}
                 </ul>
@@ -174,7 +202,7 @@ export default function Account() {
               <h4 className="text-2xl font-semibold mb-4">Reminders</h4>
               {userData?.reminders?.length > 0 ? (
                 <ul className="text-gray-700 space-y-1">
-                  {userData.reminders.map((item: any, idx: number) => (
+                  {userData.reminders.map((item: Reminders, idx: number) => (
                     <li key={idx}>⏰ {item.societyUsername}</li>
                   ))}
                 </ul>
@@ -202,10 +230,9 @@ export default function Account() {
                   type="text"
                   value={formData?.name || ""}
                   onChange={(e) =>
-                    setFormData((prev: any) => ({
-                      ...prev,
-                      name: e.target.value,
-                    }))
+                    setFormData((prev) =>
+                      prev ? { ...prev, name: e.target.value } : null,
+                    )
                   }
                   placeholder="Enter your full name"
                   className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
@@ -218,14 +245,11 @@ export default function Account() {
                   <input
                     type="text"
                     value={formData?.username || ""}
-                    onChange={(e) => {
-                      setFormData((prev: any) => ({
-                        ...prev,
-                        username: e.target.value,
-                      }));
-                      setUsernameAvailable(false);
-                      setUsernameAlreadyTaken(false);
-                    }}
+                    onChange={(e) =>
+                      setFormData((prev) =>
+                        prev ? { ...prev, username: e.target.value } : null,
+                      )
+                    }
                     placeholder="Enter unique username"
                     className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
                   />
@@ -265,10 +289,9 @@ export default function Account() {
                   type="text"
                   value={formData?.branch || ""}
                   onChange={(e) =>
-                    setFormData((prev: any) => ({
-                      ...prev,
-                      branch: e.target.value,
-                    }))
+                    setFormData((prev) =>
+                      prev ? { ...prev, branch: e.target.value } : null,
+                    )
                   }
                   placeholder="e.g. AIML"
                   className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
@@ -280,12 +303,13 @@ export default function Account() {
                   <label className="block font-medium mb-1">Batch Start</label>
                   <input
                     type="number"
-                    value={formData?.batchStart || ""}
+                    value={Number(formData?.batchStart) || ""}
                     onChange={(e) =>
-                      setFormData((prev: any) => ({
-                        ...prev,
-                        batchStart: Number(e.target.value),
-                      }))
+                      setFormData((prev) =>
+                        prev
+                          ? { ...prev, batchStart: Number(e.target.value) }
+                          : null,
+                      )
                     }
                     placeholder="e.g. 2022"
                     className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
@@ -296,12 +320,13 @@ export default function Account() {
                   <label className="block font-medium mb-1">Batch End</label>
                   <input
                     type="number"
-                    value={formData?.batchEnd || ""}
+                    value={Number(formData?.batchEnd) || ""}
                     onChange={(e) =>
-                      setFormData((prev: any) => ({
-                        ...prev,
-                        batchEnd: Number(e.target.value),
-                      }))
+                      setFormData((prev) =>
+                        prev
+                          ? { ...prev, batchEnd: Number(e.target.value) }
+                          : null,
+                      )
                     }
                     placeholder="e.g. 2026"
                     className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"

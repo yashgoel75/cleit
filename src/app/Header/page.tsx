@@ -14,7 +14,8 @@ export default function Header() {
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const router = useRouter();
-  const [isLogoutConfirmationMessage, setIsLogoutConfirmationMessage] = useState(false);
+  const [isLogoutConfirmationMessage, setIsLogoutConfirmationMessage] =
+    useState(false);
 
   useEffect(() => {
     const resizeHandler = () => setIsMobile(window.innerWidth <= 768);
@@ -34,7 +35,7 @@ export default function Header() {
   const fetchUserName = async (email: string) => {
     try {
       const response = await fetch(
-        `/api/user/account?email=${encodeURIComponent(email)}`
+        `/api/user/account?email=${encodeURIComponent(email)}`,
       );
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Failed to fetch user");
@@ -143,6 +144,12 @@ export default function Header() {
                 >
                   {displayName}
                 </p>
+                <p
+                  onClick={() => router.push("/Societies")}
+                  className="font-semibold cursor-pointer"
+                >
+                  Societies
+                </p>
                 {isLogoutConfirmationMessage ? (
                   <div className="flex-1">
                     <div>
@@ -197,6 +204,12 @@ export default function Header() {
               >
                 {displayName}
               </button>
+              <p
+                onClick={() => router.push("/Societies")}
+                className="cursor-pointer font-semibold hover:underline text-lg"
+              >
+                Societies
+              </p>
               <UserMenu />
             </>
           ) : (

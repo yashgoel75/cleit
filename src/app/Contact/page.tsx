@@ -3,9 +3,9 @@
 import "./page.css";
 import Header from "../Header/page";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import instagram from "@/assets/Instagram.png";
 import linkedin from "@/assets/LinkedIn.png";
-import Image from "next/image";
 import Footer from "../Footer/page";
 
 export default function Contact() {
@@ -50,6 +50,7 @@ export default function Contact() {
       setIsMobile(true);
     }
   }, []);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -91,9 +92,13 @@ export default function Contact() {
         subject: "",
         body: "",
       });
-    } catch (error: any) {
-      console.error("Contact form error:", error.message);
-      alert("Failed to send your message. Please try again later.");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Contact form error:", error.message);
+        alert("Failed to send your message. Please try again later.");
+      } else {
+        console.error("Error");
+      }
     } finally {
       setLoading(false);
     }
@@ -101,9 +106,7 @@ export default function Contact() {
 
   return (
     <>
-      <div className="z-40 sticky top-0 bg-white/30 backdrop-blur-md">
-        <Header />
-      </div>
+      <Header />
 
       <div className="w-full min-h-[80vh] bg-gray-50 flex items-center py-10 md:py-20 px-4">
         <div className="max-w-5xl w-full mx-auto grid md:grid-cols-2 gap-12">
@@ -272,10 +275,10 @@ export default function Contact() {
           </div>
         </div>
       </div>
-      <div className="bg-gray-50 pb-10 py-6 px-4">
-        <div className="text-center">
-          <h3 className="text-gray-800 mb-6 md:text-lg font-medium">
-            Prefer socials? Let's connect there too.
+      <div className="bg-gray-50 py-6 px-4">
+        <div className="text-center mb-6">
+          <h3 className="text-gray-800 md:text-lg font-medium">
+            Prefer socials? Let&apos;s connect there too.
           </h3>
         </div>
         <div className="flex justify-center gap-4 md:gap-6">
@@ -291,7 +294,7 @@ export default function Contact() {
               src={linkedin}
               width={isMobile ? 30 : 35}
               alt="Linkedin Logo"
-            />
+            ></Image>
           </a>
           <a
             href="https://instagram.com/yourprofile"
@@ -305,12 +308,11 @@ export default function Contact() {
               src={instagram}
               width={isMobile ? 30 : 35}
               alt="Instagram Logo"
-            />
+            ></Image>
           </a>
         </div>
       </div>
-
-      <Footer />
+      <Footer></Footer>
     </>
   );
 }

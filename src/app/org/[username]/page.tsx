@@ -1,5 +1,8 @@
-import Account from "./account";
+import {Account} from "@/componets/account";
 
-export default function Page({ params }: { params: { username: string } }) {
-  return <Account username={params.username} />;
+async function Page({ params }: { params: Promise<{ username: string }> }) {
+  const { username } = await params;
+  return <Account username={username} />;
 }
+
+export default Page;

@@ -7,8 +7,28 @@ import Link from "next/link";
 import linkedin from "@/assets/LinkedIn.png";
 import instagram from "@/assets/Instagram.png";
 import Image from "next/image";
-import { getAuth, signOut, onAuthStateChanged, User } from "firebase/auth";
+import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
+
+interface TeamMember {
+  name: string;
+  designation: string;
+  mobile: string;
+  email: string;
+}
+
+interface Event {
+  _id: string;
+  title: string;
+  type?: string;
+  venue: string;
+  time: string;
+  startDate: string;
+  endDate?: string;
+  about: string;
+  socialGroup?: string;
+}
 
 interface Society {
   _id: string;
@@ -16,15 +36,14 @@ interface Society {
   username: string;
   logo: string;
   about: string;
-  team?: any[];
-  events?: any[];
+  team?: TeamMember[];
+  events?: Event[];
   auditionOpen?: boolean;
   social?: { name: string; handle: string }[];
 }
 
-
 export default function Home() {
-    const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -38,7 +57,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [wishlist, setWishlist] = useState<string[]>([]);
-
+  const router = useRouter();
   useEffect(() => {
     async function getSocieties() {
       try {
@@ -46,8 +65,12 @@ export default function Home() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to load societies");
         setSocieties(data.societies || []);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Error");
+        }
       } finally {
         setLoading(false);
       }
@@ -58,10 +81,21 @@ export default function Home() {
 
   const addToWishlist = async (societyUsername: string) => {
     try {
+      if (
+        user == null ||
+        user?.email == "" ||
+        typeof user?.email == undefined
+      ) {
+        router.push("/auth/Login");
+        return;
+      }
       const res = await fetch("/api/user/account", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userEmail: user?.email, wishlistAdd: societyUsername }),
+        body: JSON.stringify({
+          userEmail: user?.email,
+          wishlistAdd: societyUsername,
+        }),
       });
 
       if (!res.ok) throw new Error("Failed to add to wishlist");
@@ -79,7 +113,7 @@ export default function Home() {
       <div className="min-h-[85vh] flex justify-center items-center px-4 bg-gradient-to-br from-white via-gray-50 to-white">
         <div className="max-w-4xl text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-gray-900">
-            Discover every college society in{" "}
+            Discover every college society in&nbsp;
             <span className="relative inline-block">
               <i>one place</i>
             </span>
@@ -87,7 +121,7 @@ export default function Home() {
             <span className="bg-indigo-100 px-2 rounded-md">
               explore, wishlist, join
             </span>
-            , and{" "}
+            , and&nbsp;
             <span className="text-indigo-600 underline underline-offset-4 decoration-2">
               never miss a moment.
             </span>
@@ -106,16 +140,23 @@ export default function Home() {
         </div>
       </div>
 
-      <section id="explore" className="py-16 px-4 bg-white border-t border-gray-100">
+      <section
+        id="explore"
+        className="py-16 px-4 bg-white border-t border-gray-100"
+      >
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">All Societies</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+            All Societies
+          </h2>
 
           {loading ? (
             <p className="text-center text-gray-500">Loading societies...</p>
           ) : error ? (
             <p className="text-center text-red-500">{error}</p>
           ) : societies.length === 0 ? (
-            <p className="text-center text-gray-500 italic">No societies found.</p>
+            <p className="text-center text-gray-500 italic">
+              No societies found.
+            </p>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {societies.map((society) => {
@@ -142,66 +183,87 @@ export default function Home() {
                         className="w-16 h-16 object-cover rounded-full border-1 border-indigo-700"
                       />
                       <div>
-                        <h3 className="text-xl font-semibold text-gray-800">{society.name}</h3>
-                        <p className="text-gray-500 text-sm">@{society.username}</p>
+                        <h3 className="text-xl font-semibold text-gray-800">
+                          {society.name}
+                        </h3>
+                        <p className="text-gray-500 text-sm">
+                          @{society.username}
+                        </p>
                       </div>
                     </div>
 
-                    <p className="text-sm text-gray-600 line-clamp-3">{society.about}</p>
+                    <p className="text-sm text-gray-600 line-clamp-3">
+                      {society.about}
+                    </p>
 
                     <div className="mt-4 text-sm text-gray-700">
-                      <strong>Council Members:</strong> {society.team?.length ?? "N/A"}
+                      <strong>Council Members:</strong>&nbsp;
+                      {society.team?.length ?? "N/A"}
                     </div>
 
-                    {/* Events + Audition */}
                     <div className="mt-4 text-sm text-gray-700">
                       <div>
-                        <strong>Events:</strong>{" "}
+                        <strong>Events:</strong>&nbsp;
                         {eventCount > 0
                           ? `${eventCount} upcoming or ongoing`
                           : "No upcoming events"}
                       </div>
                       <div>
-                        <strong>Auditions:</strong>{" "}
-                        <span className={`font-semibold ${society.auditionOpen ? "text-green-600" : "text-red-500"}`}>
+                        <strong>Auditions:</strong>&nbsp;
+                        <span
+                          className={`font-semibold ${society.auditionOpen ? "text-green-600" : "text-red-500"}`}
+                        >
                           {society.auditionOpen ? "Open" : "Closed"}
                         </span>
                       </div>
                     </div>
 
-                    {/* Social Icons */}
                     {Array.isArray(society.social) && (
                       <div className="mt-3 flex items-center gap-3">
                         {["LinkedIn", "Instagram"].map((platform) => {
-                          const acc = society.social?.find((s) =>
-                            s.name.toLowerCase() === platform.toLowerCase()
+                          const acc = society.social?.find(
+                            (s) =>
+                              s.name.toLowerCase() === platform.toLowerCase(),
                           );
                           if (!acc?.handle) return null;
-                          const url =
-                            platform === "LinkedIn"
-                              ? `https://www.linkedin.com/in/${acc.handle}`
-                              : `https://www.instagram.com/${acc.handle}`;
-                          const icon = platform === "LinkedIn" ? linkedin : instagram;
+                          const url = acc.handle.startsWith("http")
+                            ? acc.handle
+                            : `https://${acc.handle}`;
+
+                          const icon =
+                            platform === "LinkedIn" ? linkedin : instagram;
                           return (
-                            <a key={platform} href={url} target="_blank" rel="noopener noreferrer">
-                              <Image src={icon} alt={`${platform} icon`} width={20} height={20} className="hover:scale-110 transition-transform" />
+                            <a
+                              key={platform}
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <Image
+                                src={icon}
+                                alt={`${platform} icon`}
+                                width={20}
+                                height={20}
+                                className="hover:scale-110 transition-transform"
+                              />
                             </a>
                           );
                         })}
                       </div>
                     )}
 
-                    {/* Button row */}
                     <div className="mt-6 flex justify-between items-center gap-2">
                       <Link href={`/org/${society.username}`} passHref>
-                          View Details →
+                        View Details →
                       </Link>
 
                       <button
                         onClick={() => addToWishlist(society.username)}
                         className={`text-sm font-semibold px-3 py-2 rounded-md ${
-                          isWishlist ? "bg-green-100 text-green-700 cursor-default" : "bg-indigo-600 hover:bg-indigo-700 text-white"
-                        }`}
+                          isWishlist
+                            ? "bg-green-100 text-green-700 cursor-default"
+                            : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                        } hover:cursor-pointer`}
                         disabled={isWishlist}
                       >
                         {isWishlist ? "Added" : "Add to Wishlist"}

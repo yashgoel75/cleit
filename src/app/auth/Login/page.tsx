@@ -38,7 +38,6 @@ export default function Login() {
 
   const [isEmailEmpty, setIsEmailEmpty] = useState(false);
   const [isPasswordEmpty, setIsPasswordEmpty] = useState(false);
-  const [isRoleEmpty, setIsRoleEmpty] = useState(false);
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -54,9 +53,6 @@ export default function Login() {
     if (name == "password") {
       setIsPasswordEmpty(false);
     }
-    if (name == "role") {
-      setIsRoleEmpty(false);
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -68,7 +64,6 @@ export default function Login() {
     ) {
       setIsEmailEmpty(formData.email == "");
       setIsPasswordEmpty(formData.password == "");
-      setIsRoleEmpty(formData.role == "");
       return;
     }
     setIsSubmitting(true);
@@ -79,35 +74,15 @@ export default function Login() {
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
       setSuccess(true);
       setTimeout(() => router.push("/Account"), 1500);
-    } catch (err) {
-      setError(true);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(true);
+      }
       // console.error(err);
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  async function sendEmailOtp() {
-    try {
-      const res = await fetch(`/api/register/member?email=${formData.email}`);
-      const data = await res.json();
-
-      const otpRes = await fetch("/api/otp/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: formData.email }),
-      });
-
-      const otpData = await otpRes.json();
-      if (!otpRes.ok) {
-        console.error("OTP error:", otpData.error);
-      }
-    } catch (error) {
-      console.log("Error checking email or sending OTP:", error);
-    }
-  }
 
   useEffect(() => {
     const { email, password } = formData;
@@ -282,7 +257,7 @@ export default function Login() {
           ) : null}
         </div>
         <div className="text-center">
-          Don't have an account?&nbsp;
+          Don&apos;t have an account?&nbsp;
           <Link href={"/auth/Register"}>
             <u>Create one now.</u>
           </Link>

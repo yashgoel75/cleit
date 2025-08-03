@@ -3,16 +3,56 @@
 import Header from "@/app/Header/page";
 import Footer from "@/app/Footer/page";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import linkedin from "@/assets/LinkedIn.png";
 import instagram from "@/assets/Instagram.png";
 import Image from "next/image";
-import { ReactNode } from "react";
 
-export default function Account({ username }: { username: string }): ReactNode {
-  const [societyData, setSocietyData] = useState<any>(null);
+export function Account({ username }: { username: string }) {
+  const [societyData, setSocietyData] = useState<Society | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  interface EligibilityCriterion {
+    name: string;
+  }
+
+  interface SocialLink {
+    name: "LinkedIn" | "Instagram" | string;
+    handle: string;
+  }
+  interface TeamMember {
+    name: string;
+    designation: string;
+    mobile: string;
+    email: string;
+  }
+
+  interface Event {
+    _id: string;
+    title: string;
+    type?: string;
+    venue: string;
+    time: string;
+    startDate: string;
+    endDate?: string;
+    about: string;
+    socialGroup?: string;
+  }
+
+  interface Society {
+    name: string;
+    username: string;
+    email: string;
+    logo: string;
+    website: string;
+    about: string;
+    auditionOpen: boolean;
+    centralized: boolean;
+    team: TeamMember[];
+    events: Event[];
+    social: SocialLink[];
+    eligibility: EligibilityCriterion[];
+  }
 
   useEffect(() => {
     const fetchSociety = async () => {
@@ -24,8 +64,12 @@ export default function Account({ username }: { username: string }): ReactNode {
         if (!res.ok) throw new Error(data.error || "Failed to fetch society");
         setSocietyData(data.society);
         setError(null);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Error");
+        }
       } finally {
         setLoading(false);
       }
@@ -33,8 +77,6 @@ export default function Account({ username }: { username: string }): ReactNode {
 
     fetchSociety();
   }, [username]);
-
-  const router = useRouter();
 
   return (
     <>
@@ -94,12 +136,22 @@ export default function Account({ username }: { username: string }): ReactNode {
                   {societyData?.auditionOpen ? "Open" : "Closed"}
                 </span>
               </p>
+              <p className="text-sm font-medium">
+                Centralized Society:&nbsp;
+                <span
+                  className={
+                    societyData?.centralized ? "text-green-600" : "text-red-600"
+                  }
+                >
+                  {societyData?.centralized ? "Yes" : "No"}
+                </span>
+              </p>
             </section>
 
             <section>
               <h4 className="text-2xl font-semibold mb-4">Team Members</h4>
               <div className="grid md:grid-cols-2 gap-6">
-                {societyData?.team?.map((member: any, index: number) => (
+                {societyData?.team?.map((member: TeamMember, index: number) => (
                   <div
                     key={index}
                     className="bg-white border border-gray-200 rounded-xl shadow-md p-6"
@@ -123,37 +175,37 @@ export default function Account({ username }: { username: string }): ReactNode {
 
             <section>
               <h4 className="text-2xl font-semibold mb-4">Events</h4>
-              {societyData?.events?.length > 0 ? (
+              {societyData?.events?.length ?? 0> 0 ? (
                 (() => {
                   const now = new Date();
-                  const events = societyData.events;
+                  const events = societyData?.events;
 
-                  const ongoing = events.filter((event: any) => {
+                  const ongoing = events?.filter((event: Event) => {
                     const start = new Date(event.startDate);
                     const end = event.endDate ? new Date(event.endDate) : start;
                     return now >= start && now <= end;
                   });
 
-                  const upcoming = events.filter((event: any) => {
+                  const upcoming = events?.filter((event: Event) => {
                     const start = new Date(event.startDate);
                     return start > now;
                   });
 
-                  const past = events.filter((event: any) => {
+                  const past = events?.filter((event: Event) => {
                     const end = event.endDate
                       ? new Date(event.endDate)
                       : new Date(event.startDate);
                     return end < now;
                   });
 
-                  const renderEvents = (label: string, list: any[]) =>
+                  const renderEvents = (label: string, list: Event[]) =>
                     list.length > 0 && (
                       <>
                         <h5 className="text-xl font-semibold text-indigo-700 mt-6 mb-2">
                           {label}
                         </h5>
                         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                          {list.map((event: any) => (
+                          {list.map((event: Event) => (
                             <div
                               key={event._id}
                               className="bg-white border border-gray-200 rounded-xl shadow-md p-6"
@@ -176,13 +228,13 @@ export default function Account({ username }: { username: string }): ReactNode {
                               event.endDate !== event.startDate ? (
                                 <>
                                   <p className="text-base text-gray-600 mb-1">
-                                    <strong>Start:</strong>{" "}
+                                    <strong>Start:</strong>&nbsp;
                                     {new Date(
                                       event.startDate,
                                     ).toLocaleDateString("en-IN")}
                                   </p>
                                   <p className="text-base text-gray-600 mb-1">
-                                    <strong>End:</strong>{" "}
+                                    <strong>End:</strong>&nbsp;
                                     {new Date(event.endDate).toLocaleDateString(
                                       "en-IN",
                                     )}
@@ -190,7 +242,7 @@ export default function Account({ username }: { username: string }): ReactNode {
                                 </>
                               ) : (
                                 <p className="text-base text-gray-600 mb-1">
-                                  <strong>Date:</strong>{" "}
+                                  <strong>Date:</strong>&nbsp;
                                   {new Date(event.startDate).toLocaleDateString(
                                     "en-IN",
                                   )}
@@ -225,9 +277,9 @@ export default function Account({ username }: { username: string }): ReactNode {
 
                   return (
                     <>
-                      {renderEvents("Ongoing Events", ongoing)}
-                      {renderEvents("Upcoming Events", upcoming)}
-                      {renderEvents("Past Events", past)}
+                      {renderEvents("Ongoing Events", ongoing || [])}
+                      {renderEvents("Upcoming Events", upcoming || [])}
+                      {renderEvents("Past Events", past || [])}
                     </>
                   );
                 })()
@@ -241,7 +293,7 @@ export default function Account({ username }: { username: string }): ReactNode {
             <section>
               <h4 className="text-2xl font-semibold mb-4">Social Links</h4>
               <ul className="space-y-2">
-                {societyData?.social?.map((s: any, i: number) => {
+                {societyData?.social?.map((s: SocialLink, i: number) => {
                   const icon = s.name === "LinkedIn" ? linkedin : instagram;
                   const handleUrl = s.handle.startsWith("http")
                     ? s.handle
@@ -278,9 +330,9 @@ export default function Account({ username }: { username: string }): ReactNode {
               <h4 className="text-2xl font-semibold mb-4">
                 Eligibility Criteria
               </h4>
-              {societyData?.eligibility?.length > 0 ? (
+              {Array.isArray(societyData?.eligibility) && societyData.eligibility.length > 0 ? (
                 <ul className="list-disc list-inside text-gray-700 space-y-1">
-                  {societyData.eligibility.map((e: any, i: number) => (
+                  {societyData.eligibility!.map((e: EligibilityCriterion, i: number) => (
                     <li key={i}>{e.name}</li>
                   ))}
                 </ul>

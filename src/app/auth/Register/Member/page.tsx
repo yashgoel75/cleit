@@ -1,10 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Tooltip from "@/app/Tooltip/page";
-import Image from "next/image";
-import logo from "@/assets/cleit.png";
-import Footer from "@/app/Footer/page";
+import Tooltip from "@/app/Tooltip/tooltip";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
@@ -39,7 +36,7 @@ export default function Member() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [success, setSuccess] = useState(false);
   const [falseUsernameFormat, setFalseUsernameFormat] = useState(false);
   const [falseEmailFormat, setFalseEmailFormat] = useState(false);
   const [falsePasswordFormat, setFalsePasswordFormat] = useState(false);
@@ -128,7 +125,7 @@ export default function Member() {
     }
     setIsSubmitting(true);
     setError("");
-    setSuccess("");
+    setSuccess(false);
 
     try {
       await createUserWithEmailAndPassword(
@@ -138,8 +135,8 @@ export default function Member() {
       );
       const res = await axios.post("/api/register/member", formData);
       if (res.status === 200) {
-        setSuccess("Registration successful! Redirecting...");
-        setTimeout(() => router.push("/Dashboard"), 1500);
+        setSuccess(true);
+        setTimeout(() => router.push("/auth/Login"), 1500);
       }
     } catch (err) {
       setError("Registration failed. Please try again.");
@@ -697,7 +694,7 @@ export default function Member() {
                   >
                     <path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
                   </svg>
-                  &nbsp;{" "}
+                  &nbsp;
                   {isMobile ? "Required" : "Please enter graduation start year"}
                 </div>
               ) : null}
@@ -727,7 +724,7 @@ export default function Member() {
                   >
                     <path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
                   </svg>
-                  &nbsp;{" "}
+                  &nbsp;
                   {isMobile ? "Required" : "Please enter graduation end year"}
                 </div>
               ) : null}
@@ -813,14 +810,14 @@ export default function Member() {
           <div className="text-center mt-3">
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || success}
               className={`w-full bg-indigo-500 text-white px-6 py-2 rounded-md font-semibold transition hover:bg-indigo-700 ${
-                isSubmitting
+                isSubmitting || success
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:cursor-pointer"
               }`}
             >
-              {isSubmitting ? "Submitting..." : "Register Member"}
+              {isSubmitting ? "Submitting..." : (success ? "Redirecting... Please Wait" : "Register Member")}
             </button>
           </div>
         </form>
