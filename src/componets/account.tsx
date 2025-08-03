@@ -124,7 +124,7 @@ export function Account({ username }: { username: string }) {
                   {societyData?.website?.replace(/^https?:\/\//, "")}
                 </a>
               </p>
-              <p className="text-gray-700 mt-2">{societyData?.about}</p>
+              <p className="text-gray-700 mt-2">{societyData?.type}</p>
               <p className="mt-2 text-sm font-medium">
                 🎭 Auditions:&nbsp;
                 <span
