@@ -118,7 +118,23 @@ export default function Account() {
       setLoading(false);
     }
   };
+  const handleDelete = async (username: string) => {
+    if (!currentUser) return;
+    const res = await fetch("/api/user/account", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userEmail: currentUser.email,
+        societyUsername: username,
+      }),
+    });
 
+    if (res.ok) {
+      getUserByEmail(userData!.email);
+    }
+  };
   useEffect(() => {
     if (userData?.wishlist?.length) {
       const fetchWishlistSocieties = async () => {
@@ -392,6 +408,9 @@ export default function Account() {
                               >
                                 View Details →
                               </Link>
+                              <button onClick={() => handleDelete(society.username)} className="text-red-600 font-semibold text-sm hover:text-red-800 transition-colors hover:cursor-pointer">
+                                Remove
+                              </button>
                             </div>
                           </div>
                         )}

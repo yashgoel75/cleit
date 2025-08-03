@@ -80,3 +80,42 @@ export async function PATCH(req: NextRequest) {
     );
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    await register(); 
+
+    const { userEmail, societyUsername } = await req.json();
+
+    if (!userEmail || !societyUsername) {
+      return NextResponse.json(
+        { error: "userEmail and societyUsername are required" },
+        { status: 400 }
+      );
+    }
+
+    const user = await User.findOneAndUpdate(
+      { email: userEmail },
+      { $pull: { wishlist: { societyUsername } } }, // Match societyUsername field
+      { new: true }
+    ).select("-password");
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "User not found or society not in wishlist" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      { message: "Society removed from wishlist", user },
+      { status: 200 }
+    );
+  } catch (error: unknown) {
+    console.error("Error deleting society from wishlist:", error);
+    return NextResponse.json(
+      { error: "Failed to remove society from wishlist" },
+      { status: 500 }
+    );
+  }
+}
