@@ -5,37 +5,88 @@ import { onAuthStateChanged, User as FirebaseUser } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import Header from "../Header/page";
 import Footer from "@/app/Footer/page";
+import Link from "next/link";
+import Image from "next/image";
+import linkedin from "@/assets/LinkedIn.png";
+import instagram from "@/assets/Instagram.png";
+
+interface EligibilityCriterion {
+  name: string;
+}
+
+interface SocialLink {
+  name: "LinkedIn" | "Instagram" | string;
+  handle: string;
+}
+
+interface TeamMember {
+  name: string;
+  designation: string;
+  mobile: string;
+  email: string;
+}
+
+interface Event {
+  _id: string;
+  title: string;
+  type?: string;
+  venue: string;
+  time: string;
+  startDate: string;
+  endDate?: string;
+  about: string;
+  socialGroup?: string;
+}
+
+interface Society {
+  _id: string;
+  name: string;
+  username: string;
+  email: string;
+  logo: string;
+  website: string;
+  about: string;
+  auditionOpen: boolean;
+  centralized: boolean;
+  team: TeamMember[];
+  events: Event[];
+  social: SocialLink[];
+  eligibility: EligibilityCriterion[];
+  type: string;
+}
+
+interface User {
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+  branch: string;
+  batchStart: number;
+  batchEnd: number;
+  wishlist: { societyUsername: string }[];
+  reminders: { societyUsername: string }[];
+}
+
+interface Wishlist {
+  societyUsername: string;
+}
+
+interface Reminders {
+  societyUsername: string;
+}
 
 export default function Account() {
   const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
   const [userData, setUserData] = useState<User | null>(null);
   const [formData, setFormData] = useState<User | null>(null);
+  const [societies, setSocieties] = useState<Society[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEdit, setIsEdit] = useState(false);
   const [isPreview, setIsPreview] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState(false);
   const [usernameAlreadyTaken, setUsernameAlreadyTaken] = useState(false);
-
-  interface User {
-    name: string;
-    username: string;
-    email: string;
-    password: string;
-    branch: string;
-    batchStart: number;
-    batchEnd: number;
-    wishlist: { societyUsername: string }[];
-    reminders: { societyUsername: string }[];
-  }
-
-  interface Wishlist {
-    societyUsername: string;
-  }
-
-  interface Reminders {
-    societyUsername: string;
-  }
+  const [expandedWishlist, setExpandedWishlist] = useState<string[]>([]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -45,6 +96,7 @@ export default function Account() {
       } else {
         setCurrentUser(null);
         setUserData(null);
+        setFormData(null);
         setLoading(false);
       }
     });
@@ -67,6 +119,31 @@ export default function Account() {
     }
   };
 
+  useEffect(() => {
+    if (userData?.wishlist?.length) {
+      const fetchWishlistSocieties = async () => {
+        try {
+          const res = await fetch(`/api/society`);
+          const data = await res.json();
+          if (!res.ok)
+            throw new Error(data.error || "Failed to load societies");
+
+          const wishlistSocieties = data.societies.filter((society: Society) =>
+            userData.wishlist.some(
+              (item) => item.societyUsername === society.username,
+            ),
+          );
+          setSocieties(wishlistSocieties);
+        } catch (err: unknown) {
+          console.error(err);
+        }
+      };
+      fetchWishlistSocieties();
+    } else {
+      setSocieties([]);
+    }
+  }, [userData]);
+
   const handleUpdate = async () => {
     if (!currentUser) return;
     setIsUpdating(true);
@@ -87,8 +164,7 @@ export default function Account() {
       }
 
       if (formData?.email) {
-        const email = formData.email;
-        await getUserByEmail(email);
+        await getUserByEmail(formData.email);
       }
 
       setIsEdit(false);
@@ -124,12 +200,21 @@ export default function Account() {
       console.error(err);
     }
   };
+
+  const toggleWishlistItem = (societyUsername: string) => {
+    setExpandedWishlist((prev) =>
+      prev.includes(societyUsername)
+        ? prev.filter((item) => item !== societyUsername)
+        : [...prev, societyUsername],
+    );
+  };
+
   if (!formData || !userData) return null;
 
   return (
     <>
       <Header />
-      <main className="w-[95%] min-h-[85vh] lg:w-full max-w-4xl mx-auto py-10 md:py-16 px-4">
+      <main className="w-[95%] min-h-[85vh] lg:w-full max-w-4xl mx-auto py-10 md:py-16 px-4 sm:px-6">
         <h2 className="text-4xl md:text-5xl font-extrabold text-center text-gray-900 mb-12">
           Manage Your Account
         </h2>
@@ -186,10 +271,133 @@ export default function Account() {
             <div>
               <h4 className="text-2xl font-semibold mb-4">Wishlist</h4>
               {userData?.wishlist?.length > 0 ? (
-                <ul className="text-gray-700 space-y-1">
-                  {userData.wishlist.map((item: Wishlist, idx: number) => (
-                    <li key={idx}>{item.societyUsername}</li>
-                  ))}
+                <ul className="text-gray-700 space-y-4">
+                  {userData.wishlist.map((item: Wishlist, idx: number) => {
+                    const society = societies.find(
+                      (s) => s.username === item.societyUsername,
+                    );
+                    const isExpanded = expandedWishlist.includes(
+                      item.societyUsername,
+                    );
+
+                    return (
+                      <li key={idx} className="space-y-2 hover">
+                        <button
+                          onClick={() =>
+                            toggleWishlistItem(item.societyUsername)
+                          }
+                          className="hover:cursor-pointer text-indigo-600 hover:text-indigo-800 font-medium hover:underline transition-colors"
+                        >
+                          {item.societyUsername}
+                          {isExpanded ? " ▼" : " ▶"}
+                        </button>
+                        {isExpanded && society && (
+                          <div className="bg-white border border-gray-200 hover:shadow-xl rounded-xl p-6 transition-all duration-300 flex flex-col justify-between w-full max-w-sm mx-auto text-left">
+                            <div>
+                              <div className="flex items-center gap-4 mb-4">
+                                <img
+                                  src={society.logo}
+                                  alt={`${society.name} logo`}
+                                  className="w-16 h-16 object-cover rounded-full border-2 border-indigo-100"
+                                />
+                                <div>
+                                  <h3 className="text-xl font-semibold text-gray-800">
+                                    {society.name}
+                                  </h3>
+                                  <p className="text-gray-500 text-sm">
+                                    @{society.username}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="mt-4 space-y-2 text-sm text-gray-700">
+                                <div>
+                                  <strong>Council Members:</strong>&nbsp;
+                                  {society.team?.length ?? "N/A"}
+                                </div>
+                                <div>
+                                  <strong>Events:</strong>&nbsp;
+                                  {Array.isArray(society.events)
+                                    ? (() => {
+                                        const upcomingEvents =
+                                          society.events.filter((e) => {
+                                            const start = new Date(e.startDate);
+                                            const end = e.endDate
+                                              ? new Date(e.endDate)
+                                              : start;
+                                            const today = new Date();
+                                            return (
+                                              start >= today ||
+                                              (start <= today && end >= today)
+                                            );
+                                          });
+                                        return upcomingEvents.length > 0
+                                          ? `${upcomingEvents.length} upcoming`
+                                          : "No upcoming events";
+                                      })()
+                                    : "No upcoming events"}
+                                </div>
+                                <div>
+                                  <strong>Auditions:</strong>&nbsp;
+                                  <span
+                                    className={`font-semibold ${
+                                      society.auditionOpen
+                                        ? "text-green-600"
+                                        : "text-red-500"
+                                    }`}
+                                  >
+                                    {society.auditionOpen ? "Open" : "Closed"}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {Array.isArray(society.social) &&
+                                society.social.length > 0 && (
+                                  <div className="mt-4 flex items-center gap-3">
+                                    {society.social.map((acc) => {
+                                      if (!acc?.handle) return null;
+                                      const platform = acc.name.toLowerCase();
+                                      const url = acc.handle.startsWith("http")
+                                        ? acc.handle
+                                        : `https://${acc.handle}`;
+                                      const icon =
+                                        platform === "linkedin"
+                                          ? linkedin
+                                          : instagram;
+                                      return (
+                                        <a
+                                          key={platform}
+                                          href={url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                        >
+                                          <Image
+                                            src={icon}
+                                            alt={`${acc.name} icon`}
+                                            width={22}
+                                            height={22}
+                                            className="hover:scale-110 transition-transform"
+                                          />
+                                        </a>
+                                      );
+                                    })}
+                                  </div>
+                                )}
+                            </div>
+
+                            <div className="mt-6 flex justify-between items-center gap-2">
+                              <Link
+                                href={`/org/${society.username}`}
+                                className="text-indigo-600 font-semibold text-sm hover:text-indigo-800 transition-colors"
+                              >
+                                View Details →
+                              </Link>
+                            </div>
+                          </div>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               ) : (
                 <p className="text-gray-500 italic">

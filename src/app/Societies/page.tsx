@@ -57,7 +57,7 @@ interface Society {
   events: Event[];
   social: SocialLink[];
   eligibility: EligibilityCriterion[];
-  type: string; // The society type/category
+  type: string;
 }
 
 // Define the society types for the filter dropdown
@@ -78,7 +78,8 @@ export default function SocietiesPage() {
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedType, setSelectedType] = useState<string>("All"); // State for the filter
+  const [selectedType, setSelectedType] = useState<string>("All");
+  const [searchQuery, setSearchQuery] = useState<string>(""); // State for search query
   const router = useRouter();
 
   useEffect(() => {
@@ -160,15 +161,20 @@ export default function SocietiesPage() {
       );
     }
 
-    const filteredSocieties =
-      selectedType === "All"
-        ? societies
-        : societies.filter((s) => s.type === selectedType);
+    // Filter societies by type and search query
+    const filteredSocieties = societies.filter((s) => {
+      const matchesType = selectedType === "All" || s.type === selectedType;
+      const matchesSearch = searchQuery
+        ? s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          s.username.toLowerCase().includes(searchQuery.toLowerCase())
+        : true;
+      return matchesType && matchesSearch;
+    });
 
     if (filteredSocieties.length === 0) {
       return (
         <p className="text-center text-gray-500 italic text-lg pt-8">
-          No societies found for this category.
+          No societies found for this category or search query.
         </p>
       );
     }
@@ -330,17 +336,39 @@ export default function SocietiesPage() {
     <>
       <Header />
       <main className="bg-gray-50">
-        <div className="w-[95%] min-h-[85vh] lg:w-full max-w-6xl mx-auto py-10 md:py-20 px-4">
+        <div className="w-full max-w-6xl mx-auto py-10 md:py-20 px-4 sm:px-6">
           <h2 className="text-4xl font-bold text-gray-900 mb-6 text-center">
             Explore Societies
           </h2>
 
-          <div className="mb-12 flex justify-center">
-            <div className="relative">
+          <div className="mb-8 flex flex-col sm:flex-row justify-center gap-4">
+            <div className="relative w-full sm:w-80">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search societies by name or username..."
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring focus:ring-indigo-200 shadow-sm transition-all"
+                aria-label="Search societies"
+              />
+              <svg
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div className="relative w-full sm:w-64">
               <select
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
-                className="appearance-none w-64 bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-indigo-500 shadow transition"
+                className="appearance-none w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-indigo-500 shadow-sm transition-all"
                 aria-label="Filter societies by type"
               >
                 {SOCIETY_TYPES.map((type) => (
