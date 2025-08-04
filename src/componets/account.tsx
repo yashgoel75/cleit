@@ -169,12 +169,6 @@ export function Account({ username }: { username: string }) {
                     <p className="text-base text-gray-600 mb-1">
                       <strong>Designation:</strong> {member.designation}
                     </p>
-                    <p className="text-base text-gray-600 mb-1">
-                      <strong>Mobile:</strong> {member.mobile}
-                    </p>
-                    <p className="text-base text-gray-600">
-                      <strong>Email:</strong> {member.email}
-                    </p>
                   </div>
                 ))}
               </div>

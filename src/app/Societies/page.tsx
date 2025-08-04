@@ -161,7 +161,6 @@ export default function SocietiesPage() {
       );
     }
 
-    // Filter societies by type and search query
     const filteredSocieties = societies.filter((s) => {
       const matchesType = selectedType === "All" || s.type === selectedType;
       const matchesSearch = searchQuery
