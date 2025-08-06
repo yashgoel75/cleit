@@ -182,17 +182,28 @@ export default function Header() {
                 )}
               </>
             ) : (
-              <AuthButtons />
+              <>
+                <p className="font-semibold cursor-pointer">
+                  Vivekananda Institute of Professional Studies - Technical
+                  Campus
+                </p>
+                <AuthButtons />
+              </>
             )}
           </div>
         </div>
       )}
 
-      <header className="w-full px-5 py-4 flex items-center justify-between bg-white border-b border-gray-300 sticky top-0 z-30">
+      <header className="w-full px-5 py-5 relative flex items-center justify-between bg-white border-b border-gray-300 sticky top-0 z-30">
         <div className="flex items-center gap-4">
           <Link className="focus:outline-none" href={"/"}>
             <Image src={logo} width={isMobile ? 140 : 170} alt="Cleit" />
           </Link>
+        </div>
+        <div className="hidden lg:flex absolute left-1/2 transform -translate-x-1/2 font-bold text-xl">
+          <a href="https://vips.edu" target="_blank" rel="noopener noreferrer">
+            Vivekananda Institute of Professional Studies
+          </a>
         </div>
 
         <div className="hidden lg:flex items-center gap-6">

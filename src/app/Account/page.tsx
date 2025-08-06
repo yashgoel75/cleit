@@ -408,7 +408,10 @@ export default function Account() {
                               >
                                 View Details →
                               </Link>
-                              <button onClick={() => handleDelete(society.username)} className="text-red-600 font-semibold text-sm hover:text-red-800 transition-colors hover:cursor-pointer">
+                              <button
+                                onClick={() => handleDelete(society.username)}
+                                className="text-red-600 font-semibold text-sm hover:text-red-800 transition-colors hover:cursor-pointer"
+                              >
                                 Remove
                               </button>
                             </div>
