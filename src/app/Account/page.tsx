@@ -486,7 +486,7 @@ export default function Account() {
                   <button
                     type="button"
                     onClick={isUsernameAvailable}
-                    className="text-center rounded-md px-3 py-1 bg-indigo-500 hover:bg-indigo-700 text-white"
+                    className="text-center rounded-md px-3 py-1 bg-indigo-500 hover:bg-indigo-700 text-white hover:cursor-pointer"
                   >
                     Check
                   </button>
@@ -569,7 +569,7 @@ export default function Account() {
               <button
                 type="submit"
                 disabled={isUpdating}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-md font-semibold transition w-full sm:w-fit disabled:bg-indigo-300 disabled:cursor-not-allowed"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-md font-semibold transition w-full sm:w-fit disabled:bg-indigo-300 disabled:cursor-not-allowed hover:cursor-pointer"
               >
                 {isUpdating ? "Saving..." : "Save Changes"}
               </button>
@@ -579,7 +579,7 @@ export default function Account() {
                   setIsEdit(false);
                   setIsPreview(true);
                 }}
-                className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-md font-semibold transition w-full sm:w-fit"
+                className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-md font-semibold transition w-full sm:w-fit hover:cursor-pointer"
               >
                 Cancel
               </button>

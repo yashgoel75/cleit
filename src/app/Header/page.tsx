@@ -79,24 +79,6 @@ export default function Header() {
 
   const UserMenu = () => (
     <div className="flex items-center gap-5">
-      {!isLogoutConfirmationMessage && (
-        <nav className="font-medium text-lg">
-          <ul className="flex gap-4">
-            <li
-              onClick={() => router.push("/Societies")}
-              className="hover:underline cursor-pointer"
-            >
-              Societies
-            </li>
-            <li
-              onClick={() => router.push("/EventCalendar")}
-              className="hover:underline cursor-pointer"
-            >
-              Event Calendar
-            </li>
-          </ul>
-        </nav>
-      )}
       {isLogoutConfirmationMessage ? (
         <>
           <div className="flex-1">
@@ -122,21 +104,23 @@ export default function Header() {
           </div>
         </>
       ) : (
-        <button
-          title="Logout"
-          onClick={handleLogoutConfirmation}
-          className="text-gray-600 hover:text-red-500 transition hover:cursor-pointer"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            fill="currentColor"
+        <>
+          <button
+            title="Logout"
+            onClick={handleLogoutConfirmation}
+            className="text-gray-600 hover:text-red-500 transition hover:cursor-pointer"
           >
-            <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
-          </svg>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="currentColor"
+            >
+              <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
+            </svg>
+          </button>
+        </>
       )}
     </div>
   );
@@ -271,9 +255,17 @@ export default function Header() {
         </div>
       </header>
 
-      {!isMobile && !user && (
+      {!isMobile && (
         <div className="hidden lg:flex w-full border-b border-gray-300 py-2 justify-center">
           <nav className="flex gap-8 font-medium">
+            {user ? (
+              <button
+                onClick={() => router.push("/Account")}
+                className="cursor-pointer hover:underline"
+              >
+                Account
+              </button>
+            ) : null}
             <button
               onClick={() => router.push("/Societies")}
               className="cursor-pointer hover:underline"

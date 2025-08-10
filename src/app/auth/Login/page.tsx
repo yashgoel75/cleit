@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import Footer from "../Footer/page";
 import "./page.css";
 import Link from "next/link";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../lib/firebase";
 export default function Login() {
   const router = useRouter();
@@ -95,6 +95,16 @@ export default function Login() {
     setFalsePasswordFormat(password ? !passwordRegex.test(password) : false);
   }, [formData]);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push("/Account");
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+  
   return (
     <>
       <div className="flex justify-center">
