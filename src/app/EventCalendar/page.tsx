@@ -47,11 +47,14 @@ export default function EventCalendar() {
         setEvents(data.events as Event[]);
       } catch (err) {
         console.error(err instanceof Error ? err.message : "Unexpected error");
+      } finally {
+        setLoading(false);
       }
     }
     getEvents();
   }, []);
 
+  const [loading, setLoading] = useState(true);
   const today = new Date();
 
   const sortEvents = (arr: Event[]) => {
@@ -120,7 +123,11 @@ export default function EventCalendar() {
     <section className="mb-12">
       <h2 className="text-2xl font-bold mb-4">{title}</h2>
       {data.length === 0 ? (
-        <p className="text-gray-600">No events found.</p>
+        loading ? (
+          <p className="text-gray-600">Loading events...</p>
+        ) : (
+          <p className="text-gray-600">No events found.</p>
+        )
       ) : (
         <div className="overflow-x-auto border border-gray-200 rounded-lg shadow-sm">
           <table className="w-full text-left border-collapse">
@@ -179,7 +186,9 @@ export default function EventCalendar() {
     <>
       <Header />
       <main className="max-w-6xl mx-auto px-4 py-10 min-h-[85vh]">
-        <h1 className="text-4xl font-bold text-gray-900 mb-6 text-center">Event Calendar</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-6 text-center">
+          Event Calendar
+        </h1>
 
         <div className="mb-6 flex justify-center">
           <input
