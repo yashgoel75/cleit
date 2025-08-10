@@ -13,6 +13,8 @@ export default function Header() {
   const [displayName, setDisplayName] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [isLogoutConfirmationMessage, setIsLogoutConfirmationMessage] =
+    useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -43,11 +45,11 @@ export default function Header() {
       console.error(err);
     }
   };
-  const [isLogoutConfirmationMessage, setIsLogoutConfirmationMessage] =
-    useState(false);
+
   const handleLogoutConfirmation = () => {
     setIsLogoutConfirmationMessage(true);
   };
+
   const handleLogout = async () => {
     try {
       await signOut(getAuth());
@@ -61,13 +63,13 @@ export default function Header() {
   const AuthButtons = () => (
     <div className="flex gap-3">
       <button
-        onClick={() => router.push("/auth/login")}
+        onClick={() => router.push("/auth/Login")}
         className="text-sm md:text-base px-4 py-1.5 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition hover:cursor-pointer"
       >
         Login
       </button>
       <button
-        onClick={() => router.push("/auth/register")}
+        onClick={() => router.push("/auth/Register")}
         className="text-sm md:text-base px-4 py-1.5 border border-gray-300 rounded-md hover:bg-gray-100 transition hover:cursor-pointer"
       >
         Register
@@ -77,22 +79,24 @@ export default function Header() {
 
   const UserMenu = () => (
     <div className="flex items-center gap-5">
-      <nav className="font-medium text-lg">
-        <ul className="flex gap-4">
-          <li
-            className={`hover:underline cursor-pointer ${isLogoutConfirmationMessage ? "hidden" : null}`}
-            onClick={() => router.push("/Societies")}
-          >
-            Societies
-          </li>
-          <li
-            className={`hover:underline cursor-pointer ${isLogoutConfirmationMessage ? "hidden" : null}`}
-            onClick={() => router.push("/EventCalendar")}
-          >
-            Event Calendar
-          </li>
-        </ul>
-      </nav>
+      {!isLogoutConfirmationMessage && (
+        <nav className="font-medium text-lg">
+          <ul className="flex gap-4">
+            <li
+              onClick={() => router.push("/Societies")}
+              className="hover:underline cursor-pointer"
+            >
+              Societies
+            </li>
+            <li
+              onClick={() => router.push("/EventCalendar")}
+              className="hover:underline cursor-pointer"
+            >
+              Event Calendar
+            </li>
+          </ul>
+        </nav>
+      )}
       {isLogoutConfirmationMessage ? (
         <>
           <div className="flex-1">
@@ -155,7 +159,7 @@ export default function Header() {
           <div className="space-y-5 text-lg">
             {user ? (
               <>
-                <p className={`font-semibold cursor-pointer`}>
+                <p className="font-semibold cursor-pointer">
                   Vivekananda Institute of Professional Studies
                 </p>
                 <p
@@ -164,44 +168,6 @@ export default function Header() {
                 >
                   {displayName}
                 </p>
-                <p
-                  onClick={() => router.push("/Societies")}
-                  className="cursor-pointer hover:underline"
-                >
-                  Societies
-                </p>
-                {isLogoutConfirmationMessage ? (
-                  <>
-                    <div className="flex-1">
-                      <div>
-                        <span className="text-red-500">
-                          Are you sure you want to logout?
-                        </span>
-                      </div>
-                      <div className="flex gap-4">
-                        <button
-                          className="hover:cursor-pointer text-red-700"
-                          onClick={handleLogout}
-                        >
-                          Yes
-                        </button>
-                        <button
-                          className="hover:cursor-pointer"
-                          onClick={() => setIsLogoutConfirmationMessage(false)}
-                        >
-                          No
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <button
-                    onClick={handleLogoutConfirmation}
-                    className="text-red-600 font-medium underline hover:cursor-pointer"
-                  >
-                    Logout
-                  </button>
-                )}
               </>
             ) : (
               <>
@@ -211,6 +177,44 @@ export default function Header() {
                 </p>
                 <AuthButtons />
               </>
+            )}
+
+            <p
+              onClick={() => router.push("/Societies")}
+              className="cursor-pointer hover:underline"
+            >
+              Societies
+            </p>
+            <p
+              onClick={() => router.push("/EventCalendar")}
+              className="cursor-pointer hover:underline"
+            >
+              Event Calendar
+            </p>
+
+            {user && !isLogoutConfirmationMessage && (
+              <button
+                onClick={handleLogoutConfirmation}
+                className="text-red-600 font-medium underline hover:cursor-pointer"
+              >
+                Logout
+              </button>
+            )}
+
+            {isLogoutConfirmationMessage && (
+              <div>
+                <span className="text-red-500">
+                  Are you sure you want to logout?
+                </span>
+                <div className="flex gap-4 mt-2">
+                  <button className="text-red-700" onClick={handleLogout}>
+                    Yes
+                  </button>
+                  <button onClick={() => setIsLogoutConfirmationMessage(false)}>
+                    No
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -239,7 +243,7 @@ export default function Header() {
             <>
               <button
                 onClick={() => router.push("/Account")}
-                className={`font-semibold text-lg hover:text-indigo-700 transition hover:cursor-pointer ${isLogoutConfirmationMessage ? "hidden" : null}`}
+                className={`font-semibold text-lg hover:text-indigo-700 transition hover:cursor-pointer ${isLogoutConfirmationMessage ? "hidden" : ""}`}
               >
                 {displayName}
               </button>
@@ -266,6 +270,25 @@ export default function Header() {
           </button>
         </div>
       </header>
+
+      {!isMobile && !user && (
+        <div className="hidden lg:flex w-full border-b border-gray-300 py-2 justify-center">
+          <nav className="flex gap-8 font-medium">
+            <button
+              onClick={() => router.push("/Societies")}
+              className="cursor-pointer hover:underline"
+            >
+              Societies
+            </button>
+            <button
+              onClick={() => router.push("/EventCalendar")}
+              className="cursor-pointer hover:underline"
+            >
+              Event Calendar
+            </button>
+          </nav>
+        </div>
+      )}
     </>
   );
 }
