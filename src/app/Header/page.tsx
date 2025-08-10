@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { getAuth, signOut, onAuthStateChanged, User } from "firebase/auth";
 import logo from "@/assets/cleit.png";
 import { auth } from "@/lib/firebase";
@@ -16,6 +16,7 @@ export default function Header() {
   const [isLogoutConfirmationMessage, setIsLogoutConfirmationMessage] =
     useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const resizeHandler = () => setIsMobile(window.innerWidth <= 768);
@@ -147,7 +148,7 @@ export default function Header() {
                   Vivekananda Institute of Professional Studies
                 </p>
                 <p
-                  onClick={() => router.push("/Account")}
+                  onClick={() => router.replace("/Account")}
                   className="font-semibold cursor-pointer"
                 >
                   {displayName}
@@ -164,13 +165,13 @@ export default function Header() {
             )}
 
             <p
-              onClick={() => router.push("/Societies")}
+              onClick={() => router.replace("/Societies")}
               className="cursor-pointer hover:underline"
             >
               Societies
             </p>
             <p
-              onClick={() => router.push("/EventCalendar")}
+              onClick={() => router.replace("/EventCalendar")}
               className="cursor-pointer hover:underline"
             >
               Event Calendar
@@ -226,7 +227,7 @@ export default function Header() {
           {user ? (
             <>
               <button
-                onClick={() => router.push("/Account")}
+                onClick={() => router.replace("/Account")}
                 className={`font-semibold text-lg hover:text-indigo-700 transition hover:cursor-pointer ${isLogoutConfirmationMessage ? "hidden" : ""}`}
               >
                 {displayName}
@@ -257,24 +258,24 @@ export default function Header() {
 
       {!isMobile && (
         <div className="hidden lg:flex w-full border-b border-gray-300 py-2 justify-center">
-          <nav className="flex gap-8 font-medium">
+          <nav className="flex gap-2 font-medium">
             {user ? (
               <button
-                onClick={() => router.push("/Account")}
-                className="cursor-pointer hover:underline"
+                onClick={() => router.replace("/Account")}
+                className={`cursor-pointer px-4 py-1 rounded-md transition ${pathname.endsWith("/Account") ? "bg-indigo-600 text-white" : "text-gray-700 hover:bg-indigo-50"}`}
               >
                 Account
               </button>
             ) : null}
             <button
-              onClick={() => router.push("/Societies")}
-              className="cursor-pointer hover:underline"
+              onClick={() => router.replace("/Societies")}
+              className={`cursor-pointer px-4 py-1 rounded-md transition ${pathname.endsWith("/Societies") ? "bg-indigo-600 text-white" : "text-gray-700 hover:bg-indigo-50"}`}
             >
               Societies
             </button>
             <button
-              onClick={() => router.push("/EventCalendar")}
-              className="cursor-pointer hover:underline"
+              onClick={() => router.replace("/EventCalendar")}
+              className={`cursor-pointer px-4 py-1 rounded-md transition ${pathname.endsWith("/EventCalendar") ? "bg-indigo-600 text-white" : "text-gray-700 hover:bg-indigo-50"}`}
             >
               Event Calendar
             </button>

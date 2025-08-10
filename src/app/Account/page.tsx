@@ -230,8 +230,8 @@ export default function Account() {
   return (
     <>
       <Header />
-      <main className="w-[95%] min-h-[85vh] lg:w-full max-w-4xl mx-auto py-10 md:py-16 px-4 sm:px-6">
-        <h2 className="text-4xl md:text-5xl font-extrabold text-center text-gray-900 mb-12">
+      <main className="w-[95%] min-h-[85vh] lg:w-full max-w-4xl mx-auto py-10 px-4 sm:px-6">
+        <h2 className="text-4xl font-extrabold text-center text-gray-900 mb-12">
           Manage Your Account
         </h2>
 

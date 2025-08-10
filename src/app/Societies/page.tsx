@@ -334,7 +334,7 @@ export default function SocietiesPage() {
     <>
       <Header />
       <main className="bg-gray-50">
-        <div className="w-full max-w-6xl mx-auto py-10 md:py-20 px-4 sm:px-6">
+        <div className="w-full max-w-6xl mx-auto py-10 px-4 sm:px-6">
           <h2 className="text-4xl font-bold text-gray-900 mb-6 text-center">
             Explore Societies
           </h2>
