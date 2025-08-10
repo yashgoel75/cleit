@@ -260,25 +260,28 @@ export default function Header() {
         <div className="hidden lg:flex w-full border-b border-gray-300 py-2 justify-center">
           <nav className="flex gap-2 font-medium">
             {user ? (
-              <button
-                onClick={() => router.replace("/Account")}
-                className={`cursor-pointer px-4 py-1 rounded-md transition ${pathname.endsWith("/Account") ? "bg-indigo-600 text-white" : "text-gray-700 hover:bg-indigo-50"}`}
-              >
-                Account
-              </button>
+              <Link href={"/Account"}>
+                <button
+                  className={`cursor-pointer px-4 py-1 rounded-md transition ${pathname.endsWith("/Account") ? "bg-indigo-600 text-white" : "text-gray-700 hover:bg-indigo-50"}`}
+                >
+                  Account
+                </button>
+              </Link>
             ) : null}
-            <button
-              onClick={() => router.replace("/Societies")}
-              className={`cursor-pointer px-4 py-1 rounded-md transition ${pathname.endsWith("/Societies") ? "bg-indigo-600 text-white" : "text-gray-700 hover:bg-indigo-50"}`}
-            >
-              Societies
-            </button>
-            <button
-              onClick={() => router.replace("/EventCalendar")}
-              className={`cursor-pointer px-4 py-1 rounded-md transition ${pathname.endsWith("/EventCalendar") ? "bg-indigo-600 text-white" : "text-gray-700 hover:bg-indigo-50"}`}
-            >
-              Event Calendar
-            </button>
+            <Link href={"/Societies"}>
+              <button
+                className={`cursor-pointer px-4 py-1 rounded-md transition ${pathname.endsWith("/Societies") ? "bg-indigo-600 text-white" : "text-gray-700 hover:bg-indigo-50"}`}
+              >
+                Societies
+              </button>
+            </Link>
+            <Link href={"/EventCalendar"}>
+              <button
+                className={`cursor-pointer px-4 py-1 rounded-md transition ${pathname.endsWith("/EventCalendar") ? "bg-indigo-600 text-white" : "text-gray-700 hover:bg-indigo-50"}`}
+              >
+                Event Calendar
+              </button>
+            </Link>
           </nav>
         </div>
       )}
