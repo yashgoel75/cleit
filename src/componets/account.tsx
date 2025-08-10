@@ -53,6 +53,7 @@ export function Account({ username }: { username: string }) {
     social: SocialLink[];
     eligibility: EligibilityCriterion[];
     type: string;
+    facultyCoordinator: string;
   }
 
   useEffect(() => {
@@ -147,6 +148,14 @@ export function Account({ username }: { username: string }) {
                   {societyData?.centralized ? "Yes" : "No"}
                 </span>
               </p>
+            </section>
+            <section>
+              <h4 className="flex items-center text-2xl font-semibold mb-4">
+                Faculty Coordinator
+              </h4>
+              <div className="md:text-lg">
+                {societyData?.facultyCoordinator}
+              </div>
             </section>
             <section>
               <h4 className="flex items-center text-2xl font-semibold mb-4">

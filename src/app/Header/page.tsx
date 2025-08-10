@@ -14,8 +14,6 @@ export default function Header() {
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const router = useRouter();
-  const [isLogoutConfirmationMessage, setIsLogoutConfirmationMessage] =
-    useState(false);
 
   useEffect(() => {
     const resizeHandler = () => setIsMobile(window.innerWidth <= 768);
@@ -38,17 +36,18 @@ export default function Header() {
         `/api/user/account?email=${encodeURIComponent(email)}`,
       );
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Failed to fetch user");
+      if (!response.ok)
+        throw new Error(data.error || "Failed to fetch user name");
       setDisplayName(data.user.name);
     } catch (err) {
       console.error(err);
     }
   };
-
+  const [isLogoutConfirmationMessage, setIsLogoutConfirmationMessage] =
+    useState(false);
   const handleLogoutConfirmation = () => {
     setIsLogoutConfirmationMessage(true);
   };
-
   const handleLogout = async () => {
     try {
       await signOut(getAuth());
@@ -62,13 +61,13 @@ export default function Header() {
   const AuthButtons = () => (
     <div className="flex gap-3">
       <button
-        onClick={() => router.push("/auth/Login")}
+        onClick={() => router.push("/auth/login")}
         className="text-sm md:text-base px-4 py-1.5 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition hover:cursor-pointer"
       >
         Login
       </button>
       <button
-        onClick={() => router.push("/auth/Register")}
+        onClick={() => router.push("/auth/register")}
         className="text-sm md:text-base px-4 py-1.5 border border-gray-300 rounded-md hover:bg-gray-100 transition hover:cursor-pointer"
       >
         Register
@@ -78,28 +77,46 @@ export default function Header() {
 
   const UserMenu = () => (
     <div className="flex items-center gap-5">
+      <nav className="font-medium text-lg">
+        <ul className="flex gap-4">
+          <li
+            className={`hover:underline cursor-pointer ${isLogoutConfirmationMessage ? "hidden" : null}`}
+            onClick={() => router.push("/Societies")}
+          >
+            Societies
+          </li>
+          <li
+            className={`hover:underline cursor-pointer ${isLogoutConfirmationMessage ? "hidden" : null}`}
+            onClick={() => router.push("/EventCalendar")}
+          >
+            Event Calendar
+          </li>
+        </ul>
+      </nav>
       {isLogoutConfirmationMessage ? (
-        <div className="flex-1">
-          <div>
-            <span className="text-red-500 text-base">
-              Are you sure you want to logout?
-            </span>
+        <>
+          <div className="flex-1">
+            <div>
+              <span className="text-red-500 text-base">
+                Are you sure you want to logout?
+              </span>
+            </div>
+            <div className="flex gap-4">
+              <button
+                className="hover:cursor-pointer hover:underline text-red-700"
+                onClick={handleLogout}
+              >
+                Yes
+              </button>
+              <button
+                className="hover:cursor-pointer hover:underline"
+                onClick={() => setIsLogoutConfirmationMessage(false)}
+              >
+                No
+              </button>
+            </div>
           </div>
-          <div className="flex gap-4">
-            <button
-              className="hover:cursor-pointer text-red-700"
-              onClick={handleLogout}
-            >
-              Yes
-            </button>
-            <button
-              className="hover:cursor-pointer"
-              onClick={() => setIsLogoutConfirmationMessage(false)}
-            >
-              No
-            </button>
-          </div>
-        </div>
+        </>
       ) : (
         <button
           title="Logout"
@@ -123,14 +140,14 @@ export default function Header() {
   return (
     <>
       {isMobileNavOpen && (
-        <div className="lg:hidden fixed inset-0 bg-white z-40 px-5 py-4">
-          <div className="flex justify-between items-center mb-6">
-            <Link className="focus:outline-none" href={"/"}>
+        <div className="lg:hidden fixed inset-0 bg-white z-40 px-5 py-3">
+          <div className="flex justify-between items-center mb-6 relative">
+            <Link className="focus:outline-none relative" href={"/"}>
               <Image src={logo} width={140} alt="Cleit" />
             </Link>
             <button
               onClick={() => setIsMobileNavOpen(false)}
-              className="text-2xl text-gray-800 hover:cursor-pointer"
+              className="text-2xl relative text-gray-800 hover:cursor-pointer"
             >
               ✕
             </button>
@@ -138,6 +155,9 @@ export default function Header() {
           <div className="space-y-5 text-lg">
             {user ? (
               <>
+                <p className={`font-semibold cursor-pointer`}>
+                  Vivekananda Institute of Professional Studies
+                </p>
                 <p
                   onClick={() => router.push("/Account")}
                   className="font-semibold cursor-pointer"
@@ -146,32 +166,34 @@ export default function Header() {
                 </p>
                 <p
                   onClick={() => router.push("/Societies")}
-                  className="font-semibold cursor-pointer"
+                  className="cursor-pointer hover:underline"
                 >
                   Societies
                 </p>
                 {isLogoutConfirmationMessage ? (
-                  <div className="flex-1">
-                    <div>
-                      <span className="text-red-500">
-                        Are you sure you want to logout?
-                      </span>
+                  <>
+                    <div className="flex-1">
+                      <div>
+                        <span className="text-red-500">
+                          Are you sure you want to logout?
+                        </span>
+                      </div>
+                      <div className="flex gap-4">
+                        <button
+                          className="hover:cursor-pointer text-red-700"
+                          onClick={handleLogout}
+                        >
+                          Yes
+                        </button>
+                        <button
+                          className="hover:cursor-pointer"
+                          onClick={() => setIsLogoutConfirmationMessage(false)}
+                        >
+                          No
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex gap-4">
-                      <button
-                        className="hover:cursor-pointer text-red-700"
-                        onClick={handleLogout}
-                      >
-                        Yes
-                      </button>
-                      <button
-                        className="hover:cursor-pointer"
-                        onClick={() => setIsLogoutConfirmationMessage(false)}
-                      >
-                        No
-                      </button>
-                    </div>
-                  </div>
+                  </>
                 ) : (
                   <button
                     onClick={handleLogoutConfirmation}
@@ -194,41 +216,40 @@ export default function Header() {
         </div>
       )}
 
-      <header className="w-full px-5 py-5 relative flex items-center justify-between bg-white border-b border-gray-300 sticky top-0 z-30">
-        <div className="flex items-center gap-4">
+      <header className="w-full px-5 py-10 relative flex items-center justify-center bg-white border-b border-gray-300 sticky top-0 z-30">
+        <div className="flex items-center gap-4 absolute left-0 px-5">
           <Link className="focus:outline-none" href={"/"}>
-            <Image src={logo} width={isMobile ? 140 : 170} alt="Cleit" />
+            <Image
+              className="px-5"
+              src={logo}
+              width={isMobile ? 140 : 200}
+              alt="Cleit"
+            />
           </Link>
         </div>
-        <div className="hidden lg:flex absolute left-1/2 transform -translate-x-1/2 font-bold text-xl">
-          <a href="https://vips.edu" target="_blank" rel="noopener noreferrer">
-            Vivekananda Institute of Professional Studies
-          </a>
+        <div className="hidden lg:flex flex-1 justify-center items-center font-bold text-xl">
+          <button>
+            <a href="https://vips.edu">
+              Vivekananda Institute of Professional Studies
+            </a>
+          </button>
         </div>
-
-        <div className="hidden lg:flex items-center gap-6">
+        <div className="hidden lg:flex items-center gap-6 absolute right-0 px-5">
           {user ? (
             <>
               <button
                 onClick={() => router.push("/Account")}
-                className="font-semibold text-lg hover:text-indigo-700 transition hover:cursor-pointer"
+                className={`font-semibold text-lg hover:text-indigo-700 transition hover:cursor-pointer ${isLogoutConfirmationMessage ? "hidden" : null}`}
               >
                 {displayName}
               </button>
-              <p
-                onClick={() => router.push("/Societies")}
-                className="cursor-pointer font-semibold hover:underline text-lg"
-              >
-                Societies
-              </p>
               <UserMenu />
             </>
           ) : (
             <AuthButtons />
           )}
         </div>
-
-        <div className="block lg:hidden">
+        <div className="block lg:hidden absolute right-0 px-5">
           <button
             onClick={() => setIsMobileNavOpen(true)}
             className="hover:cursor-pointer"

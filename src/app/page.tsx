@@ -45,10 +45,9 @@ interface Society {
   events?: Event[];
   auditionOpen?: boolean;
   social?: SocialLink[];
-  type: string; // The society type/category
+  type: string;
 }
 
-// Define the society types for the filter dropdown
 const SOCIETY_TYPES = [
   "All",
   "Academic & Technical",
@@ -66,7 +65,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [wishlist, setWishlist] = useState<string[]>([]);
-  const [selectedType, setSelectedType] = useState<string>("All"); // State for the filter
+  const [selectedType, setSelectedType] = useState<string>("All");
   const router = useRouter();
 
   useEffect(() => {

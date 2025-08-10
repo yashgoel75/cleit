@@ -10,11 +10,9 @@ import { auth } from "@/lib/firebase";
 import Header from "../Header/page";
 import Footer from "../Footer/page";
 
-// Assume you have these icons in your assets folder
 import linkedin from "@/assets/LinkedIn.png";
 import instagram from "@/assets/Instagram.png";
 
-// TypeScript interface for a single society
 interface EligibilityCriterion {
   name: string;
 }
@@ -60,7 +58,6 @@ interface Society {
   type: string;
 }
 
-// Define the society types for the filter dropdown
 const SOCIETY_TYPES = [
   "All",
   "Academic & Technical",
@@ -79,7 +76,7 @@ export default function SocietiesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<string>("All");
-  const [searchQuery, setSearchQuery] = useState<string>(""); // State for search query
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const router = useRouter();
 
   useEffect(() => {
@@ -240,7 +237,9 @@ export default function SocietiesPage() {
                             </p>
                           </div>
                         </div>
-
+                        <p className="text-sm text-gray-600 line-clamp-3">
+                          {society.about}
+                        </p>
                         <div className="mt-4 space-y-2 text-sm text-gray-700">
                           <div>
                             <strong>Council Members:</strong>&nbsp;
