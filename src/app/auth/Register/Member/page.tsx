@@ -62,6 +62,9 @@ export default function Member() {
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
+  const [otpSending, setOtpSending] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
@@ -79,6 +82,8 @@ export default function Member() {
     if (name === "email") {
       setIsEmailEmpty(false);
       setEmailAlreadyTaken(false);
+      setOtpSending(false);
+      setOtpSent(false);
     }
     if (name == "password") {
       setIsPasswordEmpty(false);
@@ -174,6 +179,8 @@ export default function Member() {
         setEmailAlreadyTaken(true);
       } else {
         setEmailAlreadyTaken(false);
+        setOtpSending(true);
+
         const otpRes = await fetch("/api/otp/send", {
           method: "POST",
           headers: {
@@ -185,6 +192,9 @@ export default function Member() {
         const otpData = await otpRes.json();
         if (!otpRes.ok) {
           console.error("OTP error:", otpData.error);
+        } else {
+          setOtpSending(false);
+          setOtpSent(true);
         }
       }
     } catch (error) {
@@ -407,9 +417,9 @@ export default function Member() {
               <button
                 type="button"
                 onClick={() => sendEmailOtp()}
-                className="bg-indigo-500 w-[30%] lg:w-[20%] outline-none text-white px-1 md:px-2 lg:px-4 md:px-2 lg:px-4 py-2 rounded-r-md hover:bg-indigo-700 hover:cursor-pointer"
+                className={`bg-indigo-500 w-[30%] lg:w-[20%] outline-none text-white px-1 md:px-2 lg:px-4 md:px-2 lg:px-4 py-2 rounded-r-md hover:bg-indigo-700 ${otpSent || otpSending ? "hover:cursor-not-allowed opacity-50" : "hover:cursor-pointer"}`}
               >
-                Send OTP
+                {otpSending ? "Sending" : otpSent ? "Sent" : "Send OTP"}
               </button>
             </div>
             {isEmailEmpty ? (
@@ -817,7 +827,11 @@ export default function Member() {
                   : "hover:cursor-pointer"
               }`}
             >
-              {isSubmitting ? "Submitting..." : (success ? "Redirecting... Please Wait" : "Register Member")}
+              {isSubmitting
+                ? "Submitting..."
+                : success
+                  ? "Redirecting... Please Wait"
+                  : "Register Member"}
             </button>
           </div>
         </form>
