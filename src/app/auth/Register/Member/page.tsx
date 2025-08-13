@@ -171,6 +171,13 @@ export default function Member() {
   }
 
   async function sendEmailOtp() {
+    if (!formData.email) {
+      setIsEmailEmpty(true);
+      return;
+    }
+    if (falseEmailFormat) {
+      return;
+    }
     try {
       const res = await fetch(`/api/register/member?email=${formData.email}`);
       const data = await res.json();
@@ -247,6 +254,30 @@ export default function Member() {
       !!startYear && !!endYear && Number(endYear) <= Number(startYear),
     );
   }, [formData]);
+
+  const [remainingTime, setRemainingTime] = useState(120);
+
+  useEffect(() => {
+    if (!otpSending && !otpSent) {
+      setRemainingTime(120);
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setRemainingTime((prev) => {
+        if (prev > 0) {
+          return prev - 1;
+        } else {
+          clearInterval(timer);
+          setOtpSending(false);
+          setOtpSent(false);
+          return 0;
+        }
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [otpSending, otpSent]);
 
   return (
     <div className="w-[95%] lg:w-full max-w-4xl mx-auto">
@@ -422,6 +453,11 @@ export default function Member() {
                 {otpSending ? "Sending" : otpSent ? "Sent" : "Send OTP"}
               </button>
             </div>
+            {otpSent ? (
+              <div className="text-sm flex text-[#8C1A10] mt-1">
+                Didn't receive OTP? Send again&nbsp;in {remainingTime} seconds
+              </div>
+            ) : null}
             {isEmailEmpty ? (
               <div className="text-sm flex text-[#8C1A10] mt-1">
                 <svg
