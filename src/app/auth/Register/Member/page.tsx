@@ -455,7 +455,7 @@ export default function Member() {
             </div>
             {otpSent ? (
               <div className="text-sm flex text-[#8C1A10] mt-1">
-                Didn't receive OTP? Send again&nbsp;in {remainingTime} seconds
+                Didn&apos;t receive OTP? Send again&nbsp;in {remainingTime} seconds
               </div>
             ) : null}
             {isEmailEmpty ? (
