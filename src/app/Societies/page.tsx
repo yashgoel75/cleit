@@ -12,6 +12,7 @@ import Footer from "../Footer/page";
 
 import linkedin from "@/assets/LinkedIn.png";
 import instagram from "@/assets/Instagram.png";
+import { getFirebaseToken } from "@/utils";
 
 interface EligibilityCriterion {
   name: string;
@@ -114,9 +115,13 @@ export default function SocietiesPage() {
       return;
     }
     try {
+      const token = await getFirebaseToken();
       const res = await fetch("/api/user/account", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           userEmail: user.email,
           wishlistAdd: societyUsername,
