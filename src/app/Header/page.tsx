@@ -7,6 +7,7 @@ import { getAuth, signOut, onAuthStateChanged, User } from "firebase/auth";
 import logo from "@/assets/cleit.png";
 import { auth } from "@/lib/firebase";
 import Link from "next/link";
+import { getFirebaseToken } from "@/utils";
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
@@ -35,8 +36,14 @@ export default function Header() {
 
   const fetchUserName = async (email: string) => {
     try {
+      const token = await getFirebaseToken();
       const response = await fetch(
         `/api/user/account?email=${encodeURIComponent(email)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       const data = await response.json();
       if (!response.ok)

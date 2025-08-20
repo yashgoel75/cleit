@@ -277,7 +277,7 @@ export default function Member() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [otpSending, otpSent]);
+  }, [otpSent]);
 
   return (
     <div className="w-[95%] lg:w-full max-w-4xl mx-auto">
@@ -795,48 +795,48 @@ export default function Member() {
             <label className="block mb-1 text-gray-700 font-medium">
               Department & Branch
             </label>
-            <select
-              name="department"
-              value={formData.department}
-              onChange={handleChange}
-              className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
-            >
-              <option value="">Select...</option>
-              {[
-                "BALLB (H)",
-                "BBALLB (H)",
-                "LL.M (CL)",
-                "LL.M (ADR)",
-                "BBA - 1st Shift",
-                "BBA - 2nd Shift",
-                "B.Com (H)- 1st shift",
-                "B.Com (H)- 2nd shift",
-                "BA(JMC)- 1st shift",
-                "BA(JMC)- 2nd shift",
-                "MAMC",
-                "BCA- 1st shift",
-                "BCA- 2nd shift",
-                "MCA",
-                "BA ECO (H)- 1st shift",
-                "BA ECO (H)- 2nd shift",
-                "MA (ECONOMICS)",
-                "BA ENGLISH (H)",
-                "MA (ENGLISH)",
-                "B.Tech CSE",
-                "B.Tech AI&ML",
-                "B.Tech AI&DS",
-                "B.Tech IIOT",
-                "B.Tech EE (VLSI Design & Technology)",
-                "B.Tech CSE (Cyber Security)",
-                "B.Tech CS(Applied Mathematics)",
-                "B.Tech (LE)- Diploma Holders",
-                "B.Tech (LE)- BSc Graduates",
-              ].map((dept) => (
-                <option key={dept} value={dept}>
-                  {dept}
-                </option>
-              ))}
-            </select>
+              <select
+                name="department"
+                value={formData.department}
+                onChange={handleChange}
+                className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
+              >
+                <option value="">Select...</option>
+                {[
+                  "BALLB (H)",
+                  "BBALLB (H)",
+                  "LL.M (CL)",
+                  "LL.M (ADR)",
+                  "BBA - 1st Shift",
+                  "BBA - 2nd Shift",
+                  "B.Com (H)- 1st shift",
+                  "B.Com (H)- 2nd shift",
+                  "BA(JMC)- 1st shift",
+                  "BA(JMC)- 2nd shift",
+                  "MAMC",
+                  "BCA- 1st shift",
+                  "BCA- 2nd shift",
+                  "MCA",
+                  "BA ECO (H)- 1st shift",
+                  "BA ECO (H)- 2nd shift",
+                  "MA (ECONOMICS)",
+                  "BA ENGLISH (H)",
+                  "MA (ENGLISH)",
+                  "B.Tech CSE",
+                  "B.Tech AI&ML",
+                  "B.Tech AI&DS",
+                  "B.Tech IIOT",
+                  "B.Tech EE (VLSI Design & Technology)",
+                  "B.Tech CSE (Cyber Security)",
+                  "B.Tech CS(Applied Mathematics)",
+                  "B.Tech (LE)- Diploma Holders",
+                  "B.Tech (LE)- BSc Graduates",
+                ].map((dept) => (
+                  <option key={dept} value={dept}>
+                    {dept}
+                  </option>
+                ))}
+              </select>
             {isDepartmentEmpty ? (
               <div className="text-sm flex text-[#8C1A10] mt-1">
                 <svg

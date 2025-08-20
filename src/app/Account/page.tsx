@@ -9,6 +9,7 @@ import Link from "next/link";
 import Image from "next/image";
 import linkedin from "@/assets/LinkedIn.png";
 import instagram from "@/assets/Instagram.png";
+import { getFirebaseToken } from "@/utils";
 
 interface EligibilityCriterion {
   name: string;
@@ -105,8 +106,14 @@ export default function Account() {
 
   const getUserByEmail = async (email: string) => {
     try {
+      const token = await getFirebaseToken();
       const res = await fetch(
         `/api/user/account?email=${encodeURIComponent(email)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to fetch user data");
@@ -120,10 +127,12 @@ export default function Account() {
   };
   const handleDelete = async (username: string) => {
     if (!currentUser) return;
+    const token = await getFirebaseToken();
     const res = await fetch("/api/user/account", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         userEmail: currentUser.email,
@@ -139,7 +148,12 @@ export default function Account() {
     if (userData?.wishlist?.length) {
       const fetchWishlistSocieties = async () => {
         try {
-          const res = await fetch(`/api/society`);
+          const token = await getFirebaseToken();
+          const res = await fetch(`/api/society`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
           const data = await res.json();
           if (!res.ok)
             throw new Error(data.error || "Failed to load societies");
@@ -165,9 +179,13 @@ export default function Account() {
     setIsUpdating(true);
 
     try {
+      const token = await getFirebaseToken();
       const res = await fetch("/api/user/account", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           userEmail: currentUser.email,
           updates: formData,
