@@ -5,6 +5,6 @@ export async function verifyFirebaseToken(token: string) {
     const decodedToken = await admin.auth().verifyIdToken(token);
     return decodedToken;
   } catch (error) {
-    return null;
+    return error;
   }
 }
