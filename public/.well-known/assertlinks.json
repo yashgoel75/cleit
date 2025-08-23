@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "Cleit",
+      "package_name": "in.cleit",
+      "sha256_cert_fingerprints": [
+        "A0:57:47:F2:57:B3:BB:7B:4F:DA:4B:85:91:97:34:AD:43:D2:09:5D:4E:98:A5:1E:F9:23:C2:36:CB:0E:FA:01"
+      ]
+    }
+  }
+]

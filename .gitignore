@@ -2,6 +2,9 @@
 
 # dependencies
 /node_modules
+/gradle
+/.gradle
+/app
 /.pnp
 .pnp.*
 .yarn/*
@@ -40,3 +43,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+*.keystore
+*.jks
+*.aab
+*.apk
+
+app-release-*.apk
+app-release-*.aab
+app-release-*.idsig
+app-release-unsigned-*.apk
+
+*.gradle
