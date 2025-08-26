@@ -10,6 +10,7 @@ import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import linkedin from "@/assets/LinkedIn.png";
 import instagram from "@/assets/Instagram.png";
+import { getFirebaseToken } from "@/utils";
 
 interface TeamMember {
   name: string;
@@ -102,9 +103,13 @@ export default function Home() {
       return;
     }
     try {
+      const token = await getFirebaseToken();
       const res = await fetch("/api/user/account", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+         },
         body: JSON.stringify({
           userEmail: user.email,
           wishlistAdd: societyUsername,
