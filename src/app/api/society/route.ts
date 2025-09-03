@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
   try {
     await register();
     const { searchParams } = new URL(req.url);
-    const username = searchParams.get("username")?.toLowerCase();
+    const username = searchParams.get("username");
 
     const fieldsToExclude = "-password -email -team.mobile -team.email";
 
