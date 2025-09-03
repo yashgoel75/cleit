@@ -109,7 +109,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
-         },
+        },
         body: JSON.stringify({
           userEmail: user.email,
           wishlistAdd: societyUsername,
@@ -175,6 +175,27 @@ export default function Home() {
       return sortOrder.indexOf(a) - sortOrder.indexOf(b);
     });
 
+    function SocietyLogo({ logo, name }: { logo: string; name: string }) {
+      const [imgError, setImgError] = useState(false);
+
+      return (
+        <div className="w-16 h-16 flex items-center justify-center rounded-full border-2 border-indigo-100 bg-gray-100 text-xl font-bold text-gray-700">
+          {!imgError && logo ? (
+            <img
+              src={logo}
+              alt={`${name} logo`}
+              className="w-16 h-16 object-cover rounded-full"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <span className="w-16 h-16 rounded-full flex justify-center items-center bg-indigo-100 text-[30px]">
+              {name.charAt(0).toUpperCase()}
+            </span>
+          )}
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-16">
         {sortedCategories.map((type) => (
@@ -201,11 +222,7 @@ export default function Home() {
                   >
                     <div>
                       <div className="flex items-center gap-4 mb-4">
-                        <img
-                          src={society.logo}
-                          alt={`${society.name} logo`}
-                          className="w-16 h-16 object-cover rounded-full border-1 border-indigo-700"
-                        />
+                        <SocietyLogo logo={society.logo} name={society.name} />
                         <div>
                           <h3 className="text-xl font-semibold text-gray-800">
                             {society.name}

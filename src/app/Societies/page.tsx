@@ -9,6 +9,7 @@ import { auth } from "@/lib/firebase";
 
 import Header from "../Header/page";
 import Footer from "../Footer/page";
+import type { StaticImageData } from "next/image";
 
 import linkedin from "@/assets/LinkedIn.png";
 import instagram from "@/assets/Instagram.png";
@@ -79,6 +80,7 @@ export default function SocietiesPage() {
   const [selectedType, setSelectedType] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const router = useRouter();
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -180,6 +182,54 @@ export default function SocietiesPage() {
       );
     }
 
+    function SocialIcon({
+      icon,
+      name,
+    }: {
+      icon: string | StaticImageData;
+      name: string;
+    }) {
+      const [imgError, setImgError] = useState(false);
+
+      return (
+        <div className="flex items-center justify-center w-[22px] h-[22px] rounded-full bg-gray-200 text-sm font-semibold text-gray-700">
+          {!imgError ? (
+            <Image
+              src={icon}
+              alt={`${name} icon`}
+              width={22}
+              height={22}
+              className="hover:scale-110 transition-transform rounded-sm object-cover"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <span>{name?.charAt(0).toUpperCase()}</span>
+          )}
+        </div>
+      );
+    }
+
+    function SocietyLogo({ logo, name }: { logo: string; name: string }) {
+      const [imgError, setImgError] = useState(false);
+
+      return (
+        <div className="w-16 h-16 flex items-center justify-center rounded-full border-2 border-indigo-100 bg-gray-100 text-xl font-bold text-gray-700">
+          {!imgError && logo ? (
+            <img
+              src={logo}
+              alt={`${name} logo`}
+              className="w-16 h-16 object-cover rounded-full"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <span className="w-16 h-16 rounded-full flex justify-center items-center bg-indigo-100 text-[30px]">
+              {name.charAt(0).toUpperCase()}
+            </span>
+          )}
+        </div>
+      );
+    }
+
     const groupedSocieties = filteredSocieties.reduce(
       (acc, society) => {
         const type = society.type || "Others";
@@ -228,10 +278,9 @@ export default function SocietiesPage() {
                     >
                       <div>
                         <div className="flex items-center gap-4 mb-4">
-                          <img
-                            src={society.logo}
-                            alt={`${society.name} logo`}
-                            className="w-16 h-16 object-cover rounded-full border-2 border-indigo-100"
+                          <SocietyLogo
+                            logo={society.logo}
+                            name={society.name}
                           />
                           <div>
                             <h3 className="text-xl font-semibold text-gray-800">
@@ -290,13 +339,7 @@ export default function SocietiesPage() {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                   >
-                                    <Image
-                                      src={icon}
-                                      alt={`${acc.name} icon`}
-                                      width={22}
-                                      height={22}
-                                      className="hover:scale-110 transition-transform"
-                                    />
+                                    <SocialIcon icon={icon} name={acc.name} />
                                   </a>
                                 );
                               })}
