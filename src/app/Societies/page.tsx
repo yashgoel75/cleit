@@ -64,7 +64,7 @@ const SOCIETY_TYPES = [
   "All",
   "Academic & Technical",
   "Cultural & Arts",
-  "Social & Service",
+  "Social Entrepreneurship",
   "Sports & Fitness",
   "Leadership & Communication",
   "Misc / Special Interest",
