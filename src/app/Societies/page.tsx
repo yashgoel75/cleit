@@ -80,7 +80,6 @@ export default function SocietiesPage() {
   const [selectedType, setSelectedType] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const router = useRouter();
-  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
