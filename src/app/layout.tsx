@@ -4,9 +4,8 @@ import "./globals.css";
 import { type ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Cleit",
+  title: "Cleit - Vivekananda Institute of Professional Studies - TC",
   description: "",
-  manifest: "/manifest.webmanifest",
   themeColor: "#000000",
 };
 
