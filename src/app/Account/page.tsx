@@ -245,6 +245,27 @@ export default function Account() {
 
   if (!formData || !userData) return null;
 
+  function SocietyLogo({ logo, name }: { logo: string; name: string }) {
+      const [imgError, setImgError] = useState(false);
+
+      return (
+        <div className="w-16 h-16 flex items-center justify-center rounded-full border-2 border-indigo-100 bg-gray-100 text-xl font-bold text-gray-700">
+          {!imgError && logo ? (
+            <img
+              src={logo}
+              alt={`${name} logo`}
+              className="w-16 h-16 object-cover rounded-full"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <span className="w-16 h-16 rounded-full flex justify-center items-center bg-indigo-100 text-[30px]">
+              {name.charAt(0).toUpperCase()}
+            </span>
+          )}
+        </div>
+      );
+  }
+  
   return (
     <>
       <Header />
@@ -329,11 +350,10 @@ export default function Account() {
                           <div className="bg-white border border-gray-200 hover:shadow-xl rounded-xl p-6 transition-all duration-300 flex flex-col justify-between w-full max-w-sm mx-auto text-left">
                             <div>
                               <div className="flex items-center gap-4 mb-4">
-                                <img
-                                  src={society.logo}
-                                  alt={`${society.name} logo`}
-                                  className="w-16 h-16 object-cover rounded-full border-2 border-indigo-100"
-                                />
+                                <SocietyLogo
+                            logo={society.logo}
+                            name={society.name}
+                          />
                                 <div>
                                   <h3 className="text-xl font-semibold text-gray-800">
                                     {society.name}
