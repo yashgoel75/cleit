@@ -21,9 +21,9 @@ export default function Footer() {
         <div>
           <h3 className="text-lg font-semibold mb-3">About Us</h3>
           <p className="text-sm text-gray-400">
-            A unified platform for all career opportunities — explore jobs,
-            internships, placement drives, skill tests, and apply directly
-            without missing a deadline.
+            A unified platform for all college societies — explore, wishlist,
+            track events, set reminders, and never miss an opportunity to
+            participate.
           </p>
         </div>
 
