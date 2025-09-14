@@ -63,7 +63,11 @@ export default function EventPage() {
           if (!societyRes.ok)
             throw new Error(societyData.error || "Failed to fetch society");
           console.log(societyData);
-          setSociety(societyData.data[0] as Society);
+          const foundSociety = (societyData.data as Society[]).find(
+            (s) => s.username === foundEvent.societyUsername,
+          );
+          setSociety(foundSociety || null);
+
           console.log(societyData.data[0]);
         }
       } catch (err) {
