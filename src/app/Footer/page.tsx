@@ -70,7 +70,7 @@ export default function Footer() {
             </li> */}
             <li
               className="hover:cursor-pointer"
-              onClick={() => router.push("/contact")}
+              onClick={() => router.push("/Contact")}
             >
               Contact Us
             </li>
