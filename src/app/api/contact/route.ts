@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
         // 2. Email to you (admin copy)
         await resend.emails.send({
             from: 'Cleit <connect@yashgoel.me>',
-            to: 'yash.goel8370@gmail.com',
+            to: 'urvashis2407@gmail.com',
             subject: `New Contact Form Submission from ${name}`,
             html: `
         <h2>New support request received</h2>
